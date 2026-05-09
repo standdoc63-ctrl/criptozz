@@ -6,62 +6,78 @@ const cors = require('cors');
 
 const app = express();
 app.use(express.json());
-app.use(cors()); // Frontend-dən gələn sorğulara icazə
+app.use(cors({ origin: '*', methods: ['GET', 'POST', 'OPTIONS'] }));
 
-const DB = path.join(__dirname, 'puple.json');
-const initDB = () => { if (!fs.existsSync(DB)) fs.writeFileSync(DB, JSON.stringify({ users: [] }, null, 2)); };
-initDB();
+const DB_PATH = path.join(__dirname, 'puple.json');
 
-// Maskalama funksiyaları
+// JSON faylı yoxdursa avtomatik yarat
+if (!fs.existsSync(DB_PATH)) {
+    fs.writeFileSync(DB_PATH, JSON.stringify({ users: [] }, null, 2));
+}
+
+const readDB = () => JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
+const writeDB = (data) => fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), 'utf8');
+
 const maskEmail = (e) => { const [u, d] = e.split('@'); return `${u[0]}***@${d[0]}***.com`; };
-const maskPhone = (p) => p.length < 4 ? '****' : p.slice(0, 3) + '***' + p.slice(-4);
+const maskPhone = (p) => p.length < 4 ? '****' : `${p.slice(0,3)}***${p.slice(-4)}`;
 
 // 📝 REGISTER
 app.post('/api/register', async (req, res) => {
-    const { username, email, phone, password } = req.body;
-    if (!username || !email || !phone || !password) return res.status(400).json({ message: 'Bütün sahələr doldurulmalıdır.' });
-    if (password.length < 6) return res.status(400).json({ message: 'Parol ən az 6 simvol olmalıdır.' });
+    try {
+        const { username, email, phone, password } = req.body;
+        if (!username || !email || !phone || !password) {
+            return res.status(400).json({ message: 'Bütün sahələr doldurulmalıdır.' });
+        }
+        if (password.length < 6) return res.status(400).json({ message: 'Parol ən az 6 simvol olmalıdır.' });
 
-    const db = JSON.parse(fs.readFileSync(DB));
-    if (db.users.find(u => u.username.toLowerCase() === username.toLowerCase()))
-        return res.status(409).json({ message: 'Bu istifadəçi adı artıq mövcuddur.' });
+        const db = readDB();
+        const exists = db.users.find(u => u.username.toLowerCase() === username.toLowerCase());
+        if (exists) return res.status(409).json({ message: 'Bu istifadəçi adı artıq mövcuddur.' });
 
-    const hash = await bcrypt.hash(password, 12);
-    db.users.push({
-        id: Date.now(),
-        username,
-        email: email,               // Doğrulama üçün saxlanılır
-        email_masked: maskEmail(email), // JSON-da görünən versiya
-        phone: phone,
-        phone_masked: maskPhone(phone), // JSON-da görünən versiya
-        password_hash: hash,        // Parol heç vaxt açıq saxlanmır
-        registered_at: new Date().toISOString()
-    });
-    fs.writeFileSync(DB, JSON.stringify(db, null, 2));
-    res.json({ success: true, message: 'Qeydiyyat tamamlandı.' });
+        const hash = await bcrypt.hash(password, 12);
+        db.users.push({
+            id: Date.now(),
+            username,
+            email,
+            email_masked: maskEmail(email),
+            phone,
+            phone_masked: maskPhone(phone),
+            password_hash: hash,
+            registered_at: new Date().toISOString()
+        });
+        writeDB(db);
+        res.status(201).json({ success: true, message: 'Uğurla qeydiyyatdan keçdiniz.' });
+    } catch (err) {
+        console.error('Register Xətası:', err);
+        res.status(500).json({ message: 'Server daxili xəta baş verdi.' });
+    }
 });
 
 // 🔑 LOGIN
 app.post('/api/login', async (req, res) => {
-    const { username, password } = req.body;
-    const db = JSON.parse(fs.readFileSync(DB));
-    const user = db.users.find(u => u.username.toLowerCase() === username.toLowerCase());
-    if (!user) return res.status(401).json({ message: 'İstifadəçi tapılmadı.' });
+    try {
+        const { username, password } = req.body;
+        const db = readDB();
+        const user = db.users.find(u => u.username.toLowerCase() === username.toLowerCase());
+        if (!user) return res.status(401).json({ message: 'İstifadəçi tapılmadı.' });
 
-    const match = await bcrypt.compare(password, user.password_hash);
-    if (!match) return res.status(401).json({ message: 'Parol yanlışdır.' });
+        const match = await bcrypt.compare(password, user.password_hash);
+        if (!match) return res.status(401).json({ message: 'Parol yanlışdır.' });
 
-    // Frontend-ə yalnız maskalanmış məlumat göndərilir
-    res.json({
-        success: true,
-        user: {
-            username: user.username,
-            email: user.email_masked,
-            phone: user.phone_masked,
-            registered_at: user.registered_at
-        }
-    });
+        res.json({
+            success: true,
+            user: {
+                username: user.username,
+                email: user.email_masked,
+                phone: user.phone_masked,
+                registered_at: user.registered_at
+            }
+        });
+    } catch (err) {
+        console.error('Login Xətası:', err);
+        res.status(500).json({ message: 'Server daxili xəta.' });
+    }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`✅ Server işləyir: http://localhost:${PORT}`));
+const PORT = 3000;
+app.listen(PORT, '0.0.0.0', () => console.log(`✅ Server hazır: http://localhost:${PORT}`));
