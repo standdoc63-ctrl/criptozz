@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
     <title>Only Crypto</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
             --bg-dark: #0a0a0a;
@@ -43,45 +44,41 @@
         /* ===== BAŞLIQ ===== */
         .header {
             width: 100%;
-            padding: 20px 16px 10px;
+            padding: 16px 16px 8px;
             text-align: center;
             flex-shrink: 0;
         }
-
         .logo {
-            font-size: clamp(1.1rem, 4.5vw, 1.35rem);
+            font-size: clamp(1.05rem, 4.2vw, 1.25rem);
             font-weight: 700;
-            letter-spacing: 4px;
+            letter-spacing: 3.5px;
             text-transform: uppercase;
             background: linear-gradient(90deg, #ffffff, #9ca3af);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-
         .red-line {
-            width: 45px;
+            width: 40px;
             height: 3px;
             background: var(--divider);
             margin: 10px auto 0;
             border-radius: 2px;
         }
 
-        /* ===== BUTONLAR ===== */
+        /* ===== NAVİQASİYA ===== */
         .nav-wrapper {
             width: 100%;
-            padding: 10px 8px;
+            padding: 10px 6px;
             display: flex;
             justify-content: center;
             flex-shrink: 0;
         }
-
         .nav-buttons {
             display: flex;
             gap: 6px;
             width: 100%;
             max-width: 440px;
         }
-
         .btn {
             display: flex;
             align-items: center;
@@ -89,7 +86,7 @@
             gap: 5px;
             flex: 1;
             padding: 10px 6px;
-            font-size: clamp(0.65rem, 2.4vw, 0.75rem);
+            font-size: clamp(0.65rem, 2.3vw, 0.75rem);
             font-weight: 600;
             letter-spacing: 0.4px;
             border: 1px solid var(--btn-border);
@@ -102,46 +99,42 @@
             backdrop-filter: blur(6px);
             touch-action: manipulation;
         }
-
         .btn svg {
-            width: clamp(14px, 4vw, 16px);
-            height: clamp(14px, 4vw, 16px);
+            width: clamp(14px, 3.8vw, 16px);
+            height: clamp(14px, 3.8vw, 16px);
             stroke-width: 2;
             fill: none;
             stroke: currentColor;
             flex-shrink: 0;
         }
-
-        /* Hover & Active Rənglər */
         .btn-buy:active { background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: #34d399; }
         .btn-market:active { background: rgba(245, 158, 11, 0.2); border-color: #f59e0b; color: #fbbf24; }
         .btn-profile:active { background: rgba(59, 130, 246, 0.2); border-color: #3b82f6; color: #60a5fa; }
         .btn-deposit:active { background: rgba(139, 92, 246, 0.2); border-color: #8b5cf6; color: #a78bfa; }
         .btn-settings:active { background: rgba(107, 114, 128, 0.25); border-color: #6b7280; color: #9ca3af; }
 
-        /* ===== AYIRICI XƏT ===== */
+        /* ===== AYIRICI ===== */
         .divider {
             width: 80%;
             max-width: 400px;
             height: 2px;
             background: linear-gradient(90deg, transparent, #ef4444, transparent);
-            margin: 8px auto 0;
+            margin: 6px auto 0;
             flex-shrink: 0;
         }
 
-        /* ===== AŞAĞI HİSSƏ ===== */
+        /* ===== AŞAĞI SAHƏ ===== */
         .content {
             flex: 1;
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 16px;
         }
-
         .test-label {
             color: #2a2a2a;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             letter-spacing: 2px;
             text-transform: uppercase;
             border: 1px dashed #1a1a1a;
@@ -149,26 +142,100 @@
             border-radius: 8px;
         }
 
-        @media (max-width: 360px) {
-            .btn { padding: 9px 4px; gap: 4px; }
-            .logo { letter-spacing: 3px; }
+        /* ===== PROFİL MODALI ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
         }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        
+        .modal-card {
+            background: #141414;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            width: 100%;
+            max-width: 320px;
+            color: var(--text-primary);
+            position: relative;
+            transform: scale(0.95);
+            transition: transform 0.2s ease;
+        }
+        .modal-overlay.active .modal-card { transform: scale(1); }
+
+        .modal-close {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: none;
+            border: none;
+            color: #6b7280;
+            font-size: 1.4rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: 4px;
+        }
+        .modal-title {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 18px;
+        }
+        .profile-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.8rem;
+        }
+        .profile-row:last-of-type { border-bottom: none; }
+        .profile-label { color: var(--text-muted); }
+        .profile-value { font-weight: 500; text-align: right; max-width: 60%; word-break: break-all; }
+        
+        .btn-logout {
+            width: 100%;
+            margin-top: 18px;
+            padding: 11px;
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: var(--transition);
+        }
+        .btn-logout:active { transform: scale(0.98); opacity: 0.9; }
+        .no-user-msg { text-align: center; color: #ef4444; font-size: 0.85rem; margin: 20px 0; }
     </style>
 </head>
 <body>
 
+    <!-- BAŞLIQ -->
     <header class="header">
         <h1 class="logo">Only Crypto</h1>
         <div class="red-line"></div>
     </header>
 
+    <!-- NAVİQASİYA -->
     <nav class="nav-wrapper">
         <div class="nav-buttons">
-            <button class="btn btn-buy">
+            <button class="btn btn-buy" onclick="alert('Tezliklə aktiv olacaq')">
                 <svg viewBox="0 0 24 24"><path d="M7 16V4m0 12l-4-4m4 4l4-4M17 8v12m0-12l4 4m-4-4l-4 4"/></svg>
                 <span>Buy / Sell</span>
             </button>
-            <button class="btn btn-market">
+            <button class="btn btn-market" onclick="alert('Tezliklə aktiv olacaq')">
                 <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 5-9"/></svg>
                 <span>Market</span>
             </button>
@@ -176,11 +243,11 @@
                 <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 <span>Profile</span>
             </button>
-            <button class="btn btn-deposit">
+            <button class="btn btn-deposit" onclick="alert('Tezliklə aktiv olacaq')">
                 <svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/><path d="M12 15v-4m0 0l-2 2m2-2l2 2"/></svg>
                 <span>Deposit</span>
             </button>
-            <button class="btn btn-settings">
+            <button class="btn btn-settings" onclick="alert('Tezliklə aktiv olacaq')">
                 <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 <span>Settings</span>
             </button>
@@ -193,5 +260,69 @@
         <span class="test-label">test</span>
     </main>
 
+    <!-- PROFİL MODALI -->
+    <div id="profile-modal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeProfileModal()">&times;</button>
+            <h3 class="modal-title">User Profile</h3>
+            <div id="profile-data"></div>
+            <button id="logout-btn" class="btn-logout" style="display:none;" onclick="logoutUser()">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        // Telegram Mini App tam ekran rejimi
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.expand();
+            window.Telegram.WebApp.ready();
+        }
+
+        const modal = document.getElementById('profile-modal');
+        const dataBox = document.getElementById('profile-data');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        // Profil düyməsi klik hadisəsi
+        document.querySelector('.btn-profile').addEventListener('click', openProfileModal);
+
+        // Modalı kənarda klikləyəndə bağlamaq
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeProfileModal();
+        });
+
+        function openProfileModal() {
+            const raw = localStorage.getItem('crypto_user');
+            const user = raw ? JSON.parse(raw) : null;
+
+            if (!user) {
+                dataBox.innerHTML = `<div class="no-user-msg">Hesab tapılmadı.<br>Əvvəlcə qeydiyyatdan keçin.</div>`;
+                logoutBtn.style.display = 'none';
+            } else {
+                const regDate = new Date(user.registered_at).toLocaleString('az-AZ', {
+                    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                });
+                dataBox.innerHTML = `
+                    <div class="profile-row"><span class="profile-label">Username</span><span class="profile-value">${user.username}</span></div>
+                    <div class="profile-row"><span class="profile-label">Email</span><span class="profile-value">${user.email}</span></div>
+                    <div class="profile-row"><span class="profile-label">Phone</span><span class="profile-value">${user.phone}</span></div>
+                    <div class="profile-row"><span class="profile-label">Registered</span><span class="profile-value">${regDate}</span></div>
+                `;
+                logoutBtn.style.display = 'block';
+            }
+            modal.style.display = 'flex';
+            // Yumşaq animasiya üçün
+            requestAnimationFrame(() => modal.classList.add('active'));
+        }
+
+        function closeProfileModal() {
+            modal.classList.remove('active');
+            setTimeout(() => { modal.style.display = 'none'; }, 200);
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('crypto_user');
+            closeProfileModal();
+            setTimeout(() => window.location.reload(), 300);
+        }
+    </script>
 </body>
 </html>
