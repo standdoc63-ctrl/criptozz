@@ -1,1 +1,132 @@
-js
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Only Crypto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(180deg, #1a1a1a, #2d2d2d);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ===== BAŞLIQ HİSSƏSİ ===== */
+        .header {
+            width: 100%;
+            padding: 25px 0 15px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+
+        .header .separator {
+            width: 80%;
+            max-width: 400px;
+            height: 3px;
+            background: #e63946;
+            margin: 12px auto 0;
+            border-radius: 2px;
+        }
+
+        /* ===== BUTTONLAR ===== */
+        .nav-buttons {
+            width: 100%;
+            padding: 20px 15px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .nav-buttons button {
+            padding: 12px 22px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: 2px solid #e63946;
+            background: transparent;
+            color: #ffffff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .nav-buttons button:hover {
+            background: #e63946;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(230, 57, 70, 0.4);
+        }
+
+        /* ===== AYIRICI XƏT ===== */
+        .divider {
+            width: 90%;
+            max-width: 500px;
+            height: 2px;
+            background: #e63946;
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        /* ===== AŞAĞI BOŞ HİSSƏ ===== */
+        .content-area {
+            flex: 1;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .content-area .test-label {
+            font-size: 1.1rem;
+            color: #888;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BAŞLIQ -->
+    <div class="header">
+        <h1>Only Crypto</h1>
+        <div class="separator"></div>
+    </div>
+
+    <!-- NAVİQASİYA BUTTONLARI -->
+    <div class="nav-buttons">
+        <button>Buy / Sell</button>
+        <button>Market</button>
+        <button>Profile</button>
+        <button>Deposit / Withdraw</button>
+        <button>Settings</button>
+    </div>
+
+    <!-- AYIRICI XƏT -->
+    <div class="divider"></div>
+
+    <!-- BOŞ HİSSƏ / TEST -->
+    <div class="content-area">
+        <span class="test-label">test</span>
+    </div>
+
+</body>
+</html>
