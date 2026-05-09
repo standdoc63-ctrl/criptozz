@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+    <title>Only Crypto - Auth</title>
+    <style>
+        :root { --bg: #0a0a0a; --text: #f0f0f0; --muted: #6b7280; --accent: #ef4444; --input-bg: rgba(255,255,255,0.04); --border: rgba(255,255,255,0.08); }
+        * { margin:0; padding:0; box-sizing:border-box; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: linear-gradient(160deg, #0f0f0f, #181818, #0d0d0d); min-height:100dvh; color: var(--text); display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 20px; }
+        .card { width:100%; max-width:380px; background: rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:16px; padding:24px; backdrop-filter: blur(12px); }
+        h2 { text-align:center; margin-bottom:6px; font-size:1.2rem; letter-spacing:1px; }
+        .sub { text-align:center; color: var(--muted); font-size:0.8rem; margin-bottom:18px; }
+        .field { margin-bottom:12px; }
+        .field label { display:block; font-size:0.7rem; color: var(--muted); margin-bottom:5px; letter-spacing:0.5px; text-transform:uppercase; }
+        .field input { width:100%; padding:12px; background: var(--input-bg); border:1px solid var(--border); border-radius:10px; color: var(--text); font-size:0.85rem; outline:none; transition:0.2s; }
+        .field input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(239,68,68,0.2); }
+        .btn { width:100%; padding:13px; background: var(--accent); color:#fff; border:none; border-radius:10px; font-weight:600; font-size:0.85rem; cursor:pointer; transition:0.2s; margin-top:8px; touch-action: manipulation; }
+        .btn:active { transform: scale(0.98); opacity:0.9; }
+        .switch { text-align:center; margin-top:14px; font-size:0.75rem; color: var(--muted); }
+        .switch a { color: #60a5fa; text-decoration:none; margin-left:4px; cursor:pointer; }
+        .hidden { display:none; }
+        .msg { text-align:center; font-size:0.7rem; min-height:1.1em; margin-top:8px; }
+        .msg.err { color:#ef4444; }
+        .msg.ok { color:#10b981; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <!-- REGISTER -->
+        <form id="reg-form">
+            <h2>Create Account</h2>
+            <p class="sub">Join Only Crypto</p>
+            <div class="field"><label>Username</label><input type="text" id="r-user" required autocomplete="username"></div>
+            <div class="field"><label>Email (Gmail)</label><input type="email" id="r-email" required autocomplete="email"></div>
+            <div class="field"><label>Phone</label><input type="tel" id="r-phone" required autocomplete="tel"></div>
+            <div class="field"><label>Password</label><input type="password" id="r-pass" required minlength="6" autocomplete="new-password"></div>
+            <button type="submit" class="btn">Register</button>
+            <div id="r-msg" class="msg"></div>
+            <div class="switch">Already have an account? <a id="to-login">Login</a></div>
+        </form>
+
+        <!-- LOGIN -->
+        <form id="log-form" class="hidden">
+            <h2>Welcome Back</h2>
+            <p class="sub">Sign in to your account</p>
+            <div class="field"><label>Username</label><input type="text" id="l-user" required autocomplete="username"></div>
+            <div class="field"><label>Password</label><input type="password" id="l-pass" required autocomplete="current-password"></div>
+            <button type="submit" class="btn">Login</button>
+            <div id="l-msg" class="msg"></div>
+            <div class="switch">Don't have an account? <a id="to-reg">Register</a></div>
+        </form>
+    </div>
+
+    <script>
+        // 🔹 Backend URL-ni öz hosting/server adresinizə dəyişin
+        const API = 'http://localhost:3000/api';
+        const regForm = document.getElementById('reg-form');
+        const logForm = document.getElementById('log-form');
+        const rMsg = document.getElementById('r-msg');
+        const lMsg = document.getElementById('l-msg');
+
+        document.getElementById('to-login').onclick = () => { regForm.classList.add('hidden'); logForm.classList.remove('hidden'); };
+        document.getElementById('to-reg').onclick = () => { logForm.classList.add('hidden'); regForm.classList.remove('hidden'); };
+
+        regForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const payload = {
+                username: document.getElementById('r-user').value.trim(),
+                email: document.getElementById('r-email').value.trim(),
+                phone: document.getElementById('r-phone').value.trim(),
+                password: document.getElementById('r-pass').value
+            };
+            try {
+                const res = await fetch(`${API}/register`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+                const json = await res.json();
+                if(res.ok) { rMsg.className='msg ok'; rMsg.textContent='Uğurla qeydiyyatdan keçdiniz!'; setTimeout(()=> { regForm.classList.add('hidden'); logForm.classList.remove('hidden'); lMsg.className=''; }, 1200); }
+                else { rMsg.className='msg err'; rMsg.textContent=json.message; }
+            } catch { rMsg.className='msg err'; rMsg.textContent='Server xətası. Yoxlayın.'; }
+        };
+
+        logForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const payload = {
+                username: document.getElementById('l-user').value.trim(),
+                password: document.getElementById('l-pass').value
+            };
+            try {
+                const res = await fetch(`${API}/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+                const json = await res.json();
+                if(res.ok) {
+                    localStorage.setItem('crypto_user', JSON.stringify(json.user));
+                    lMsg.className='msg ok'; lMsg.textContent='Giriş uğurlu! Yönləndirilir...';
+                    setTimeout(()=> window.location.href='index.html', 900);
+                } else { lMsg.className='msg err'; lMsg.textContent=json.message; }
+            } catch { lMsg.className='msg err'; lMsg.textContent='Server xətası.'; }
+        };
+    </script>
+</body>
+</html>
