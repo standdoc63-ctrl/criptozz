@@ -20,14 +20,16 @@
         .switch { text-align:center; margin-top:14px; font-size:0.75rem; color: var(--muted); }
         .switch a { color: #60a5fa; text-decoration:none; margin-left:4px; cursor:pointer; }
         .hidden { display:none; }
-        .msg { text-align:center; font-size:0.7rem; min-height:1.1em; margin-top:8px; }
+        .msg { text-align:center; font-size:0.7rem; min-height:1.1em; margin-top:8px; word-break: break-word; }
         .msg.err { color:#ef4444; }
         .msg.ok { color:#10b981; }
+        .warn { background: rgba(245,158,11,0.1); border:1px solid #f59e0b; color:#fbbf24; padding:8px; border-radius:8px; font-size:0.65rem; margin-bottom:12px; text-align:center; }
     </style>
 </head>
 <body>
     <div class="card">
-        <!-- REGISTER -->
+        <div id="protocol-warn" class="warn" style="display:none;">⚠️ Xahiş edirik, faylı birbaşa açmayın. Lokal server ilə işlədin (Live Server / http-server).</div>
+        
         <form id="reg-form">
             <h2>Create Account</h2>
             <p class="sub">Join Only Crypto</p>
@@ -40,7 +42,6 @@
             <div class="switch">Already have an account? <a id="to-login">Login</a></div>
         </form>
 
-        <!-- LOGIN -->
         <form id="log-form" class="hidden">
             <h2>Welcome Back</h2>
             <p class="sub">Sign in to your account</p>
@@ -53,15 +54,35 @@
     </div>
 
     <script>
-        // 🔹 Backend URL-ni öz hosting/server adresinizə dəyişin
+        // Localhost üçün API URL
         const API = 'http://localhost:3000/api';
         const regForm = document.getElementById('reg-form');
         const logForm = document.getElementById('log-form');
         const rMsg = document.getElementById('r-msg');
         const lMsg = document.getElementById('l-msg');
 
+        // file:// protokolu yoxlanışı
+        if (window.location.protocol === 'file:') {
+            document.getElementById('protocol-warn').style.display = 'block';
+        }
+
         document.getElementById('to-login').onclick = () => { regForm.classList.add('hidden'); logForm.classList.remove('hidden'); };
         document.getElementById('to-reg').onclick = () => { logForm.classList.add('hidden'); regForm.classList.remove('hidden'); };
+
+        async function fetchAPI(endpoint, payload) {
+            try {
+                const res = await fetch(`${API}/${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const json = await res.json();
+                return { ok: res.ok, data: json };
+            } catch (err) {
+                console.error('Network/Server Error:', err);
+                return { ok: false, data: { message: `Server bağlantısı qurulmadı. ${err.message}` } };
+            }
+        }
 
         regForm.onsubmit = async (e) => {
             e.preventDefault();
@@ -71,12 +92,10 @@
                 phone: document.getElementById('r-phone').value.trim(),
                 password: document.getElementById('r-pass').value
             };
-            try {
-                const res = await fetch(`${API}/register`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-                const json = await res.json();
-                if(res.ok) { rMsg.className='msg ok'; rMsg.textContent='Uğurla qeydiyyatdan keçdiniz!'; setTimeout(()=> { regForm.classList.add('hidden'); logForm.classList.remove('hidden'); lMsg.className=''; }, 1200); }
-                else { rMsg.className='msg err'; rMsg.textContent=json.message; }
-            } catch { rMsg.className='msg err'; rMsg.textContent='Server xətası. Yoxlayın.'; }
+            const { ok, data } = await fetchAPI('register', payload);
+            rMsg.className = ok ? 'msg ok' : 'msg err';
+            rMsg.textContent = data.message;
+            if (ok) setTimeout(() => { regForm.classList.add('hidden'); logForm.classList.remove('hidden'); lMsg.className=''; }, 1200);
         };
 
         logForm.onsubmit = async (e) => {
@@ -85,15 +104,13 @@
                 username: document.getElementById('l-user').value.trim(),
                 password: document.getElementById('l-pass').value
             };
-            try {
-                const res = await fetch(`${API}/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-                const json = await res.json();
-                if(res.ok) {
-                    localStorage.setItem('crypto_user', JSON.stringify(json.user));
-                    lMsg.className='msg ok'; lMsg.textContent='Giriş uğurlu! Yönləndirilir...';
-                    setTimeout(()=> window.location.href='index.html', 900);
-                } else { lMsg.className='msg err'; lMsg.textContent=json.message; }
-            } catch { lMsg.className='msg err'; lMsg.textContent='Server xətası.'; }
+            const { ok, data } = await fetchAPI('login', payload);
+            lMsg.className = ok ? 'msg ok' : 'msg err';
+            lMsg.textContent = data.message;
+            if (ok) {
+                localStorage.setItem('crypto_user', JSON.stringify(data.user));
+                setTimeout(() => window.location.href = 'index.html', 800);
+            }
         };
     </script>
 </body>
