@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
-    <title>Only Crypto - Auth</title>
+    <title>Only Crypto</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --bg: #0a0a0a; --text: #f0f0f0; --muted: #6b7280; --accent: #ef4444; --input-bg: rgba(255,255,255,0.04); --border: rgba(255,255,255,0.08); }
@@ -53,122 +53,42 @@
         <div class="admin-hint">🔐 Secure access</div>
     </div>
 
+    <!-- 🛡️ OBFUSCATED JS (Fayl adı gizli) -->
     <script>
-        // 🛡️ TƏHLÜKƏSİZLİK QATI (Anti-F12 & Obfuscation)
-        (() => {
-            // 1. Console & DevTools Protection
-            const noop = () => {};
-            console.log = noop; console.info = noop; console.warn = noop; console.error = noop; console.debug = noop;
-            setInterval(() => console.clear(), 2000);
+        // 🚫 ANTI-DEBUG & F12 QORUNMASI
+        (function(){const _0x4a2b=['log','info','warn','error','debug','clear','preventDefault','keydown','contextmenu','outerWidth','innerWidth','outerHeight','innerHeight','body','innerHTML','<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#ef4444;font-size:1.5rem;background:#0a0a0a;">🚫 Access Restricted</div>','replace','crypto.html','onlycrypto_users','getItem','setItem','parse','stringify','find','toLowerCase','length','slice','toString','charCodeAt','abs','Date','toISOString','Telegram','WebApp','ready','expand','getElementById','value','trim','className','textContent','hidden','classList','add','remove','setTimeout','href','location','addEventListener','dataset','id','querySelector','querySelectorAll','split','@','join','push','filter','includes','map','Math','min','floor','1000','60','24'];(function(_0x1c8f3d,_0x4a2b2c){const _0x5c8e1a=function(_0x5f3080){while(--_0x5f3080){_0x1c8f3d['push'](_0x1c8f3d['shift']());}};_0x5c8e1a(++_0x4a2b2c);}(_0x4a2b,0x1a6));const _0x5c8e=function(_0x1c8f3d,_0x4a2b2c){_0x1c8f3d=_0x1c8f3d-0x0;let _0x5c8e1a=_0x4a2b[_0x1c8f3d];return _0x5c8e1a;};const noop=()=>{};for(let i=0x0;i<0x5;i++){const fn=_0x5c8e('0x0'+i);console[fn]=noop;}setInterval(()=>console[_0x5c8e('0x5')](),0x7d0);document[_0x5c8e('0x7')](_0x5c8e('0x6'),_0x2d9f98=>_0x2d9f98[_0x5c8e('0x6')]());document[_0x5c8e('0x7')](_0x5c8e('0x7'),_0x2d9f98=>{const _0x4e0a33=_0x2d9f98[_0x5c8e('0x8')];if(_0x4e0a33===_0x5c8e('0x9')||(_0x2d9f98['ctrlKey']&&_0x2d9f98['shiftKey']&&['I','J','C']['includes'](_0x4e0a33['toUpperCase']()))||(_0x2d9f98['ctrlKey']&&_0x4e0a33['toLowerCase']()===_0x5c8e('0xa'))){_0x2d9f98[_0x5c8e('0x6')]();}});setInterval(()=>{const _0x3f8e5a=window[_0x5c8e('0xb')]-window[_0x5c8e('0xc')]>0xa0,_0x1d4c3b=window[_0x5c8e('0xd')]-window[_0x5c8e('0xe')]>0xa0;if(_0x3f8e5a||_0x1d4c3b){document[_0x5c8e('0xf')][_0x5c8e('0x10')]=_0x5c8e('0x11');}},0x320);})();
 
-            // 2. F12 & DevTools Detection
-            let devtoolsOpen = false;
-            const detect = () => {
-                const w = window.outerWidth - window.innerWidth > 160;
-                const h = window.outerHeight - window.innerHeight > 160;
-                if (w || h) { devtoolsOpen = true; document.body.innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;font-size:1.2rem;">🚫 Access Restricted</div>'; }
-            };
-            setInterval(detect, 800);
-
-            // 3. Block Right Click & Shortcuts
-            document.addEventListener('contextmenu', e => e.preventDefault());
-            document.addEventListener('keydown', e => {
-                if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase())) || (e.ctrlKey && e.key.toLowerCase() === 'u')) {
-                    e.preventDefault();
-                }
-            });
-        })();
-
-        // 🔐 Şifrələnmiş İstifadəçi Məlumatları (Runtime Decode)
-        const _u = String.fromCharCode(65,100,109,105,110); // "Admin"
-        const _p = String.fromCharCode(122,120,99,118,49,50,113); // "zxcv12q"
+        // 🔐 OBFUSCATED CREDENTIALS (Admin: zxcv12q)
+        const _u = String[_0x5c8e('0x12')](0x41,0x64,0x6d,0x69,0x6e); // "Admin"
+        const _p = String[_0x5c8e('0x12')](0x7a,0x78,0x63,0x76,0x31,0x32,0x71); // "zxcv12q"
         Object.defineProperty(window, '_u', { writable:false, configurable:false, enumerable:false });
         Object.defineProperty(window, '_p', { writable:false, configurable:false, enumerable:false });
 
-        // 🔒 Giriş Cəhdi Limiti
-        let loginAttempts = 0;
-        const MAX_ATTEMPTS = 3;
-        let isLocked = false;
+        // 🔒 RATE LIMIT
+        let _attempts = 0, _locked = false;
 
-        // Telegram Init
-        if (window.Telegram?.WebApp) { window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); }
+        // 🤖 TELEGRAM INIT
+        if(window[_0x5c8e('0x13')]?.[_0x5c8e('0x14')]){window[_0x5c8e('0x13')][_0x5c8e('0x14')][_0x5c8e('0x15')]();window[_0x5c8e('0x13')][_0x5c8e('0x14')][_0x5c8e('0x16')]();}
 
-        const regForm = document.getElementById('reg-form');
-        const logForm = document.getElementById('log-form');
-        const rMsg = document.getElementById('r-msg');
-        const lMsg = document.getElementById('l-msg');
+        // DOM ELEMENTS (Obfuscated selectors)
+        const _rf = document[_0x5c8e('0x17')]('reg-form'), _lf = document[_0x5c8e('0x17')]('log-form');
+        const _rm = document[_0x5c8e('0x17')]('r-msg'), _lm = document[_0x5c8e('0x17')]('l-msg');
+        const _tl = document[_0x5c8e('0x17')]('to-login'), _tr = document[_0x5c8e('0x17')]('to-reg');
 
-        document.getElementById('to-login').onclick = () => { regForm.classList.add('hidden'); logForm.classList.remove('hidden'); rMsg.textContent=''; lMsg.textContent=''; };
-        document.getElementById('to-reg').onclick = () => { logForm.classList.add('hidden'); regForm.classList.remove('hidden'); rMsg.textContent=''; lMsg.textContent=''; };
+        _tl['onclick'] = () => { _rf[_0x5c8e('0x18')][_0x5c8e('0x19')]('hidden'); _lf[_0x5c8e('0x18')][_0x5c8e('0x1a')]('hidden'); _rm['textContent']=''; _lm['textContent']=''; };
+        _tr['onclick'] = () => { _lf[_0x5c8e('0x18')][_0x5c8e('0x19')]('hidden'); _rf[_0x5c8e('0x18')][_0x5c8e('0x1a')]('hidden'); _rm['textContent']=''; _lm['textContent']=''; };
 
-        const maskEmail = e => { const [u,d]=e.split('@'); return `${u[0]}***@${d[0]}***.com`; };
-        const maskPhone = p => p.length<4?'****':`${p.slice(0,3)}***${p.slice(-4)}`;
-        const simpleHash = s => { let h=0; for(let i=0;i<s.length;i++) h=((h<<5)-h)+s.charCodeAt(i); return 'h_'+Math.abs(h).toString(36); };
+        // UTILS
+        const _maskE = e => { const [u,d]=e[_0x5c8e('0x1b')]('@'); return `${u[0]}***@${d[0]}***.com`; };
+        const _maskP = p => p[_0x5c8e('0x1c')]<4?'****':`${p[_0x5c8e('0x1d')](0,3)}***${p[_0x5c8e('0x1d')](-4)}`;
+        const _hash = s => { let h=0; for(let i=0;i<s[_0x5c8e('0x1c')];i++)h=((h<<5)-h)+s[_0x5c8e('0x1e')](i); return 'h_'+Math[_0x5c8e('0x1f')](h)[_0x5c8e('0x20')](36); };
+        const _enc = r => btoa(r), _dec = e => { try{ return atob(e); }catch{ return '••••••'; } };
 
-        // 🔹 QEYDİYYAT
-        regForm.onsubmit = e => {
-            e.preventDefault();
-            const user = document.getElementById('r-user').value.trim();
-            const email = document.getElementById('r-email').value.trim();
-            const phone = document.getElementById('r-phone').value.trim();
-            const pass = document.getElementById('r-pass').value;
-            if(pass.length<6){ rMsg.className='msg err'; rMsg.textContent='Parol ən az 6 simvol olmalıdır.'; return; }
-            let users = JSON.parse(localStorage.getItem('onlycrypto_users')||'[]');
-            if(users.find(u=>u.username.toLowerCase()===user.toLowerCase())){ rMsg.className='msg err'; rMsg.textContent='İstifadəçi adı mövcuddur.'; return; }
-            users.push({ 
-            id:Date.now(), 
-            username:user, 
-            email, 
-            phone, 
-            email_masked:maskEmail(email), 
-            phone_masked:maskPhone(phone), 
-            password_hash:simpleHash(pass), 
-            password_enc: btoa(pass), // 👈 BU SƏTRİ ƏLAVƏ EDİN
-            registered_at:new Date().toISOString() 
-        });
-            localStorage.setItem('onlycrypto_users', JSON.stringify(users));
-            rMsg.className='msg ok'; rMsg.textContent='Uğurla qeydiyyatdan keçdiniz!';
-            setTimeout(()=>{ regForm.classList.add('hidden'); logForm.classList.remove('hidden'); },1200);
-        };
+        // 📝 REGISTER
+        _rf['onsubmit'] = e => { e[_0x5c8e('0x6')](); const u=document[_0x5c8e('0x17')]('r-user')['value']['trim'](), em=document[_0x5c8e('0x17')]('r-email')['value']['trim'](), ph=document[_0x5c8e('0x17')]('r-phone')['value']['trim'](), pw=document[_0x5c8e('0x17')]('r-pass')['value']; if(pw[_0x5c8e('0x1c')]<6){ _rm['className']='msg err'; _rm['textContent']='Parol ən az 6 simvol olmalıdır.'; return; } let users=JSON[_0x5c8e('0x21')](localStorage[_0x5c8e('0x22')](_0x5c8e('0x23'))||'[]'); if(users[_0x5c8e('0x24')](x=>x['username'][_0x5c8e('0x25')]()===u[_0x5c8e('0x25')]())){ _rm['className']='msg err'; _rm['textContent']='İstifadəçi adı mövcuddur.'; return; } users[_0x5c8e('0x26')]({ id:Date[_0x5c8e('0x27')](), username:u, email:em, phone:ph, email_masked:_maskE(em), phone_masked:_maskP(ph), password_hash:_hash(pw), password_enc:_enc(pw), registered_at:new Date()[_0x5c8e('0x27')]() }); localStorage[_0x5c8e('0x28')](_0x5c8e('0x23'), JSON[_0x5c8e('0x29')](users)); _rm['className']='msg ok'; _rm['textContent']='Uğurla qeydiyyatdan keçdiniz!'; setTimeout(()=>{ _rf[_0x5c8e('0x18')][_0x5c8e('0x19')]('hidden'); _lf[_0x5c8e('0x18')][_0x5c8e('0x1a')]('hidden'); }, 0x4b0); };
 
-        // 🔹 GİRİŞ (Admin + User)
-        logForm.onsubmit = e => {
-            e.preventDefault();
-            if(isLocked){ lMsg.className='msg err'; lMsg.textContent='Təhlükəsizlik kilidi. 30 saniyə gözləyin.'; return; }
-
-            const user = document.getElementById('l-user').value.trim();
-            const pass = document.getElementById('l-pass').value;
-
-            // 🛡️ Admin Yoxlaması (Obfuscated)
-            if(user === _u && pass === _p) {
-                loginAttempts = 0;
-                localStorage.setItem('admin_session', JSON.stringify({ username:'Admin', role:'admin', logged_at:new Date().toISOString() }));
-                lMsg.className='msg ok'; lMsg.textContent='Admin girişi uğurlu!';
-                setTimeout(()=>window.location.href='mm.html', 600);
-                return;
-            }
-
-            // 👤 Normal User Yoxlaması
-            const users = JSON.parse(localStorage.getItem('onlycrypto_users')||'[]');
-            const acc = users.find(u=>u.username.toLowerCase()===user.toLowerCase());
-            if(!acc){ lMsg.className='msg err'; lMsg.textContent='İstifadəçi tapılmadı.'; loginAttempts++; return; }
-            if(simpleHash(pass)!==acc.password_hash){ lMsg.className='msg err'; lMsg.textContent='Parol yanlışdır.'; loginAttempts++; }
-
-            if(loginAttempts >= MAX_ATTEMPTS) {
-                isLocked = true;
-                lMsg.className='msg err'; lMsg.textContent='Çoxlu səhv cəhd. 30 saniyə gözləyin.';
-                setTimeout(()=>{ isLocked=false; loginAttempts=0; }, 30000);
-            } else {
-                lMsg.textContent = `Yanlış məlumat. Qalan cəhd: ${MAX_ATTEMPTS - loginAttempts}`;
-            }
-
-            if(acc && simpleHash(pass)===acc.password_hash) {
-                loginAttempts = 0;
-                localStorage.setItem('crypto_user', JSON.stringify({ username:acc.username, email:acc.email_masked, phone:acc.phone_masked, registered_at:acc.registered_at }));
-                lMsg.className='msg ok'; lMsg.textContent='Giriş uğurlu!';
-                setTimeout(()=>window.location.href='index.html', 600);
-            }
-        };
+        // 🔑 LOGIN
+        _lf['onsubmit'] = e => { e[_0x5c8e('0x6')](); if(_locked){ _lm['className']='msg err'; _lm['textContent']='Təhlükəsizlik kilidi. 30 saniyə gözləyin.'; return; } const u=document[_0x5c8e('0x17')]('l-user')['value']['trim'](), pw=document[_0x5c8e('0x17')]('l-pass')['value']; if(u===_u && pw===_p){ _attempts=0; localStorage[_0x5c8e('0x28')]('admin_session', JSON[_0x5c8e('0x29')]({ username:'Admin', role:'admin', logged_at:new Date()[_0x5c8e('0x27')]() })); _lm['className']='msg ok'; _lm['textContent']='Admin girişi uğurlu!'; setTimeout(()=>window[_0x5c8e('0x2a')][_0x5c8e('0x2b')]('mm.html'), 0x258); return; } const users=JSON[_0x5c8e('0x21')](localStorage[_0x5c8e('0x22')](_0x5c8e('0x23'))||'[]'), acc=users[_0x5c8e('0x24')](x=>x['username'][_0x5c8e('0x25')]()===u[_0x5c8e('0x25')]()); if(!acc){ _lm['className']='msg err'; _lm['textContent']='İstifadəçi tapılmadı.'; _attempts++; return; } if(_hash(pw)!==acc['password_hash']){ _lm['className']='msg err'; _lm['textContent']='Parol yanlışdır.'; _attempts++; } if(_attempts>=3){ _locked=true; _lm['className']='msg err'; _lm['textContent']='Çoxlu səhv cəhd. 30 saniyə gözləyin.'; setTimeout(()=>{ _locked=false; _attempts=0; }, 0x7530); } else { _lm['textContent'] = `Yanlış məlumat. Qalan cəhd: ${3 - _attempts}`; } if(acc && _hash(pw)===acc['password_hash']){ _attempts=0; localStorage[_0x5c8e('0x28')]('crypto_user', JSON[_0x5c8e('0x29')]({ username:acc['username'], email:acc['email_masked'], phone:acc['phone_masked'], registered_at:acc['registered_at'] })); _lm['className']='msg ok'; _lm['textContent']='Giriş uğurlu!'; setTimeout(()=>window[_0x5c8e('0x2a')][_0x5c8e('0x2b')]('index.html'), 0x258); } };
     </script>
 </body>
 </html>
