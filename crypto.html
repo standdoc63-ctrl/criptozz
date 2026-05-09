@@ -23,13 +23,11 @@
         .msg { text-align:center; font-size:0.7rem; min-height:1.1em; margin-top:8px; word-break: break-word; }
         .msg.err { color:#ef4444; }
         .msg.ok { color:#10b981; }
-        .warn { background: rgba(245,158,11,0.1); border:1px solid #f59e0b; color:#fbbf24; padding:8px; border-radius:8px; font-size:0.65rem; margin-bottom:12px; text-align:center; }
     </style>
 </head>
 <body>
     <div class="card">
-        <div id="protocol-warn" class="warn" style="display:none;">⚠️ Xahiş edirik, faylı birbaşa açmayın. Lokal server ilə işlədin (Live Server / http-server).</div>
-        
+        <!-- REGISTER -->
         <form id="reg-form">
             <h2>Create Account</h2>
             <p class="sub">Join Only Crypto</p>
@@ -42,6 +40,7 @@
             <div class="switch">Already have an account? <a id="to-login">Login</a></div>
         </form>
 
+        <!-- LOGIN -->
         <form id="log-form" class="hidden">
             <h2>Welcome Back</h2>
             <p class="sub">Sign in to your account</p>
@@ -54,63 +53,87 @@
     </div>
 
     <script>
-        // Localhost üçün API URL
-        const API = 'http://localhost:3000/api';
         const regForm = document.getElementById('reg-form');
         const logForm = document.getElementById('log-form');
         const rMsg = document.getElementById('r-msg');
         const lMsg = document.getElementById('l-msg');
 
-        // file:// protokolu yoxlanışı
-        if (window.location.protocol === 'file:') {
-            document.getElementById('protocol-warn').style.display = 'block';
-        }
-
         document.getElementById('to-login').onclick = () => { regForm.classList.add('hidden'); logForm.classList.remove('hidden'); };
         document.getElementById('to-reg').onclick = () => { logForm.classList.add('hidden'); regForm.classList.remove('hidden'); };
 
-        async function fetchAPI(endpoint, payload) {
-            try {
-                const res = await fetch(`${API}/${endpoint}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const json = await res.json();
-                return { ok: res.ok, data: json };
-            } catch (err) {
-                console.error('Network/Server Error:', err);
-                return { ok: false, data: { message: `Server bağlantısı qurulmadı. ${err.message}` } };
-            }
-        }
+        // 🔹 MASKALAMA FUNKSİYALARI
+        const maskEmail = (e) => { const [u, d] = e.split('@'); return `${u[0]}***@${d[0]}***.com`; };
+        const maskPhone = (p) => p.length < 4 ? '****' : `${p.slice(0,3)}***${p.slice(-4)}`;
 
-        regForm.onsubmit = async (e) => {
-            e.preventDefault();
-            const payload = {
-                username: document.getElementById('r-user').value.trim(),
-                email: document.getElementById('r-email').value.trim(),
-                phone: document.getElementById('r-phone').value.trim(),
-                password: document.getElementById('r-pass').value
-            };
-            const { ok, data } = await fetchAPI('register', payload);
-            rMsg.className = ok ? 'msg ok' : 'msg err';
-            rMsg.textContent = data.message;
-            if (ok) setTimeout(() => { regForm.classList.add('hidden'); logForm.classList.remove('hidden'); lMsg.className=''; }, 1200);
+        // 🔹 ŞİFRƏLƏMƏ (sadə hash - demo üçün)
+        const simpleHash = (str) => {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                hash |= 0;
+            }
+            return 'hash_' + Math.abs(hash).toString(36);
         };
 
-        logForm.onsubmit = async (e) => {
+        // 🔹 QEYDİYYAT
+        regForm.onsubmit = (e) => {
             e.preventDefault();
-            const payload = {
-                username: document.getElementById('l-user').value.trim(),
-                password: document.getElementById('l-pass').value
-            };
-            const { ok, data } = await fetchAPI('login', payload);
-            lMsg.className = ok ? 'msg ok' : 'msg err';
-            lMsg.textContent = data.message;
-            if (ok) {
-                localStorage.setItem('crypto_user', JSON.stringify(data.user));
-                setTimeout(() => window.location.href = 'index.html', 800);
+            const username = document.getElementById('r-user').value.trim();
+            const email = document.getElementById('r-email').value.trim();
+            const phone = document.getElementById('r-phone').value.trim();
+            const password = document.getElementById('r-pass').value;
+
+            if (password.length < 6) { rMsg.className='msg err'; rMsg.textContent='Parol ən az 6 simvol olmalıdır.'; return; }
+
+            // localStorage-dən oxu
+            let users = JSON.parse(localStorage.getItem('onlycrypto_users') || '[]');
+            
+            // Təkrar yoxlama
+            if (users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
+                rMsg.className='msg err'; rMsg.textContent='Bu istifadəçi adı artıq mövcuddur.';
+                return;
             }
+
+            // Yeni istifadəçi əlavə et
+            users.push({
+                id: Date.now(),
+                username,
+                email,
+                email_masked: maskEmail(email),
+                phone,
+                phone_masked: maskPhone(phone),
+                password_hash: simpleHash(password), // Parolu hash-lə saxla
+                registered_at: new Date().toISOString()
+            });
+            localStorage.setItem('onlycrypto_users', JSON.stringify(users));
+
+            rMsg.className='msg ok'; rMsg.textContent='Uğurla qeydiyyatdan keçdiniz!';
+            setTimeout(() => { regForm.classList.add('hidden'); logForm.classList.remove('hidden'); lMsg.className=''; }, 1200);
+        };
+
+        // 🔹 GİRİŞ
+        logForm.onsubmit = (e) => {
+            e.preventDefault();
+            const username = document.getElementById('l-user').value.trim();
+            const password = document.getElementById('l-pass').value;
+
+            const users = JSON.parse(localStorage.getItem('onlycrypto_users') || '[]');
+            const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+
+            if (!user) { lMsg.className='msg err'; lMsg.textContent='İstifadəçi tapılmadı.'; return; }
+            if (simpleHash(password) !== user.password_hash) { lMsg.className='msg err'; lMsg.textContent='Parol yanlışdır.'; return; }
+
+            // Giriş uğurlu - maskalanmış məlumatı localStorage-a yaz
+            const sessionUser = {
+                username: user.username,
+                email: user.email_masked,
+                phone: user.phone_masked,
+                registered_at: user.registered_at
+            };
+            localStorage.setItem('crypto_user', JSON.stringify(sessionUser));
+
+            lMsg.className='msg ok'; lMsg.textContent='Giriş uğurlu! Yönləndirilir...';
+            setTimeout(() => window.location.href = 'index.html', 800);
         };
     </script>
 </body>
