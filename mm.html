@@ -5,18 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
     <title>Admin Panel - Only Crypto</title>
     <style>
-        :root { --bg: #0a0a0a; --text: #f0f0f0; --muted: #6b7280; --accent: #ef4444; --card-bg: rgba(255,255,255,0.03); --border: rgba(255,255,255,0.08); --success: #10b981; --warning: #f59e0b; --blue: #3b82f6; }
+        :root { --bg: #0a0a0a; --text: #f0f0f0; --muted: #6b7280; --accent: #ef4444; --card-bg: rgba(255,255,255,0.03); --border: rgba(255,255,255,0.08); --success: #10b981; --blue: #3b82f6; }
         * { margin:0; padding:0; box-sizing:border-box; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: linear-gradient(160deg, #0f0f0f, #181818, #0d0d0d); min-height:100dvh; color: var(--text); padding: 20px; }
         
-        /* ===== 404 PAGE ===== */
         .error-page { display: none; min-height: 100dvh; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; }
         .error-page.active { display: flex; }
         .error-code { font-size: 4rem; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
         .error-msg { font-size: 1.1rem; color: var(--muted); margin-bottom: 24px; }
         .btn-home { padding: 12px 28px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; text-decoration: none; }
         
-        /* ===== ADMIN PANEL ===== */
         .admin-panel { display: none; max-width: 950px; margin: 0 auto; }
         .admin-panel.active { display: block; }
         
@@ -48,24 +46,26 @@
         
         .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
         
-        /* ===== MODAL ===== */
-        .modal-overlay { position: fixed; inset:0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); z-index:999; display:none; align-items:center; justify-content:center; padding:20px; }
+        /* MODAL */
+        .modal-overlay { position: fixed; inset:0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); z-index:999; display:none; align-items:center; justify-content:center; padding:20px; }
         .modal-overlay.active { display:flex; }
-        .modal-content { background:#141414; border:1px solid var(--border); border-radius:16px; padding:24px; width:100%; max-width:420px; position:relative; animation: pop 0.25s ease; }
+        .modal-content { background:#141414; border:1px solid var(--border); border-radius:16px; padding:24px; width:100%; max-width:440px; position:relative; animation: pop 0.25s ease; }
         @keyframes pop { from { transform:scale(0.95); opacity:0; } to { transform:scale(1); opacity:1; } }
         .modal-close { position:absolute; top:14px; right:14px; background:none; border:none; color:var(--muted); font-size:1.5rem; cursor:pointer; }
         .modal-title { font-size:1.1rem; font-weight:600; margin-bottom:16px; text-align:center; }
-        .detail-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:0.85rem; }
-        .detail-label { color:var(--muted); }
-        .detail-value { font-weight:500; text-align:right; max-width:60%; word-break:break-all; }
-        .pass-section { margin-top:16px; padding-top:12px; border-top:1px dashed var(--border); }
-        .pass-section label { display:block; font-size:0.7rem; color:var(--muted); margin-bottom:6px; }
-        .pass-input { width:100%; padding:10px; background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; color:var(--text); margin-bottom:10px; }
-        .btn-save-pass { width:100%; padding:11px; background:var(--success); color:#fff; border:none; border-radius:8px; font-weight:600; cursor:pointer; touch-action:manipulation; }
+        .detail-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:0.85rem; align-items:center; }
+        .detail-label { color:var(--muted); min-width: 80px; }
+        .detail-value { font-weight:500; text-align:right; word-break:break-all; flex:1; margin-left: 8px; }
+        .pass-section { margin-top:18px; padding-top:14px; border-top:1px dashed var(--border); }
+        .pass-section label { display:block; font-size:0.75rem; color:var(--muted); margin-bottom:8px; }
+        .pass-input { width:100%; padding:11px; background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; color:var(--text); margin-bottom:12px; }
+        .btn-save-pass { width:100%; padding:12px; background:var(--success); color:#fff; border:none; border-radius:8px; font-weight:600; cursor:pointer; touch-action:manipulation; }
         .btn-save-pass:active { transform:scale(0.98); opacity:0.9; }
         .pass-msg { text-align:center; font-size:0.7rem; margin-top:8px; min-height:1em; }
         .pass-msg.ok { color:var(--success); }
         .pass-msg.err { color:var(--accent); }
+        .copy-btn { background:none; border:none; color:var(--blue); cursor:pointer; font-size:0.7rem; margin-left:8px; }
+        .copy-btn:active { color:#fff; }
 
         @media (max-width: 600px) {
             .user-table { display:block; overflow-x:auto; }
@@ -75,14 +75,12 @@
 </head>
 <body>
 
-    <!-- 404 QORUNMASI -->
     <div id="error-page" class="error-page">
         <div class="error-code">404</div>
         <div class="error-msg">Səhifə tapılmadı və ya giriş icazəniz yoxdur.</div>
         <a href="crypto.html" class="btn-home">Giriş Səhifəsinə Qayıt</a>
     </div>
 
-    <!-- ADMIN PANEL -->
     <div id="admin-panel" class="admin-panel">
         <header class="header">
             <h1>🛡️ Admin Panel</h1>
@@ -100,17 +98,7 @@
             <input type="text" class="search-box" id="search-input" placeholder="🔍 Search username, email or phone...">
             <div id="users-container">
                 <table class="user-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Registered</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>ID</th><th>Username</th><th>Email</th><th>Phone</th><th>Registered</th><th>Status</th><th>Action</th></tr></thead>
                     <tbody id="users-body"></tbody>
                 </table>
                 <div id="empty-msg" class="empty-state" style="display:none;">Heç bir istifadəçi tapılmadı.</div>
@@ -118,7 +106,6 @@
         </div>
     </div>
 
-    <!-- DETAL MODALI -->
     <div id="detail-modal" class="modal-overlay">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal()">&times;</button>
@@ -127,14 +114,33 @@
             
             <div class="pass-section">
                 <label>🔑 Change Password</label>
-                <input type="password" class="pass-input" id="new-password" placeholder="Enter new password (min 6 chars)">
-                <button class="btn-save-pass" onclick="updatePassword()">Update Password</button>
+                <input type="text" class="pass-input" id="new-password" placeholder="Enter new password (min 6 chars)">
+                <button class="btn-save-pass" onclick="updatePassword()">Update & Save Password</button>
                 <div id="pass-msg" class="pass-msg"></div>
             </div>
         </div>
     </div>
 
     <script>
+        // 🛡️ ANTI-DEBUG & F12 QORUNMASI
+        (() => {
+            const noop = () => {};
+            console.log = console.info = console.warn = console.error = console.debug = noop;
+            setInterval(() => console.clear(), 2000);
+            const checkDev = () => {
+                if (window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160) {
+                    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#ef4444;font-size:1.5rem;background:#0a0a0a;">🚫 Access Restricted</div>';
+                }
+            };
+            setInterval(checkDev, 800);
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            document.addEventListener('keydown', e => {
+                if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase())) || (e.ctrlKey && e.key.toLowerCase() === 'u')) {
+                    e.preventDefault();
+                }
+            });
+        })();
+
         // 🔐 SESSION YOXLANIŞI
         const adminSession = JSON.parse(localStorage.getItem('admin_session'));
         const errorPage = document.getElementById('error-page');
@@ -153,17 +159,18 @@
 
         function adminLogout() { localStorage.removeItem('admin_session'); window.location.href = 'crypto.html'; }
 
-        // 📊 DATA YÜKLƏMƏ & RENDER
+        // 🔓 PAROL DEKODLAMA (Base64)
+        const decodePass = (enc) => { try { return atob(enc); } catch { return '••••••'; } };
+        const encodePass = (raw) => btoa(raw);
+
+        // 📊 DATA YÜKLƏMƏ
         function loadAdminData() {
             const allUsers = JSON.parse(localStorage.getItem('onlycrypto_users') || '[]');
             const today = new Date().toDateString();
-            
             document.getElementById('total-users').textContent = allUsers.length;
             document.getElementById('today-reg').textContent = allUsers.filter(u => new Date(u.registered_at).toDateString() === today).length;
-            
             const firstReg = allUsers.length > 0 ? new Date(Math.min(...allUsers.map(u => new Date(u.registered_at)))) : new Date();
             document.getElementById('site-age').textContent = Math.floor((new Date() - firstReg) / (1000 * 60 * 60 * 24));
-            
             renderUsers(allUsers);
         }
 
@@ -171,7 +178,6 @@
             const tbody = document.getElementById('users-body');
             const emptyMsg = document.getElementById('empty-msg');
             tbody.innerHTML = '';
-            
             if (!users.length) { emptyMsg.style.display = 'block'; return; }
             emptyMsg.style.display = 'none';
 
@@ -190,7 +196,6 @@
                 tbody.appendChild(row);
             });
 
-            // Details button listeners
             document.querySelectorAll('.btn-details').forEach(btn => {
                 btn.addEventListener('click', () => openModal(btn.dataset.id));
             });
@@ -203,7 +208,7 @@
             renderUsers(all.filter(u => u.username.toLowerCase().includes(term) || (u.email||'').includes(term) || (u.phone||'').includes(term)));
         });
 
-        // 📦 MODAL İDARƏETMƏ
+        // 📦 MODAL
         const modal = document.getElementById('detail-modal');
         const detailInfo = document.getElementById('detail-info');
         const passInput = document.getElementById('new-password');
@@ -216,11 +221,13 @@
             
             currentEditId = user.id;
             const regDate = new Date(user.registered_at).toLocaleString('az-AZ', { weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' });
+            const visiblePass = user.password_enc ? decodePass(user.password_enc) : '•••••• (Köhnə format)';
             
             detailInfo.innerHTML = `
                 <div class="detail-row"><span class="detail-label">Username</span><span class="detail-value">${escapeHtml(user.username)}</span></div>
                 <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">${escapeHtml(user.email || '—')}</span></div>
                 <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${escapeHtml(user.phone || '—')}</span></div>
+                <div class="detail-row"><span class="detail-label">Password</span><span class="detail-value">${escapeHtml(visiblePass)} <button class="copy-btn" onclick="copyText('${escapeHtml(visiblePass.replace(/'/g, "\\'"))}')')">📋</button></span></div>
                 <div class="detail-row"><span class="detail-label">Registered</span><span class="detail-value">${regDate}</span></div>
             `;
             passInput.value = '';
@@ -231,6 +238,13 @@
         function closeModal() { modal.classList.remove('active'); currentEditId = null; }
         modal.addEventListener('click', e => { if(e.target === modal) closeModal(); });
 
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                if(btn) { btn.textContent = '✅'; setTimeout(()=> btn.textContent='📋', 1000); }
+            });
+        }
+
         // 🔑 PAROL YENİLƏMƏ
         function updatePassword() {
             const newPass = passInput.value.trim();
@@ -240,15 +254,17 @@
             const idx = all.findIndex(u => u.id == currentEditId);
             if (idx === -1) return;
 
-            // Hash generation (matches crypto.html)
+            // Yeni parolu Base64 kodlayıb saxlayır (admin görə bilsin)
+            all[idx].password_enc = encodePass(newPass);
+            // Login üçün hash də yenilənir
             let hash = 0;
             for (let i = 0; i < newPass.length; i++) { hash = ((hash << 5) - hash) + newPass.charCodeAt(i); hash |= 0; }
             all[idx].password_hash = 'h_' + Math.abs(hash).toString(36);
             
             localStorage.setItem('onlycrypto_users', JSON.stringify(all));
-            passMsg.className = 'pass-msg ok'; passMsg.textContent = '✅ Parol uğurla dəyişdirildi.';
+            passMsg.className = 'pass-msg ok'; passMsg.textContent = '✅ Parol uğurla yeniləndi və saxlanıldı.';
             passInput.value = '';
-            setTimeout(closeModal, 1200);
+            setTimeout(closeModal, 1500);
         }
 
         // 🛡️ XSS QORUNMASI
