@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
     <title>Admin Panel - Only Crypto</title>
     <style>
-        :root { --bg: #0a0a0a; --text: #f0f0f0; --muted: #6b7280; --accent: #ef4444; --card-bg: rgba(255,255,255,0.03); --border: rgba(255,255,255,0.08); --success: #10b981; --warning: #f59e0b; }
+        :root { --bg: #0a0a0a; --text: #f0f0f0; --muted: #6b7280; --accent: #ef4444; --card-bg: rgba(255,255,255,0.03); --border: rgba(255,255,255,0.08); --success: #10b981; --warning: #f59e0b; --blue: #3b82f6; }
         * { margin:0; padding:0; box-sizing:border-box; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: linear-gradient(160deg, #0f0f0f, #181818, #0d0d0d); min-height:100dvh; color: var(--text); padding: 20px; }
         
@@ -17,7 +17,7 @@
         .btn-home { padding: 12px 28px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; text-decoration: none; }
         
         /* ===== ADMIN PANEL ===== */
-        .admin-panel { display: none; max-width: 900px; margin: 0 auto; }
+        .admin-panel { display: none; max-width: 950px; margin: 0 auto; }
         .admin-panel.active { display: block; }
         
         .header { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
@@ -34,60 +34,70 @@
         .card-title { font-size: 1rem; font-weight: 600; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
         
         .search-box { width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 0.85rem; margin-bottom: 16px; outline: none; }
-        .search-box:focus { border-color: var(--accent); }
+        .search-box:focus { border-color: var(--blue); }
         
         .user-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
         .user-table th { text-align: left; padding: 12px 8px; color: var(--muted); font-weight: 500; border-bottom: 1px solid var(--border); text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.5px; }
-        .user-table td { padding: 12px 8px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .user-table td { padding: 12px 8px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; }
         .user-table tr:last-child td { border-bottom: none; }
-        .user-table .username { font-weight: 600; color: var(--text); }
-        .user-table .muted { color: var(--muted); }
-        .user-table .badge { display: inline-block; padding: 4px 10px; background: rgba(16,185,129,0.15); color: #34d399; border-radius: 20px; font-size: 0.7rem; font-weight: 500; }
+        .username { font-weight: 600; color: var(--text); }
+        .muted { color: var(--muted); }
+        .badge { display: inline-block; padding: 4px 10px; background: rgba(16,185,129,0.15); color: #34d399; border-radius: 20px; font-size: 0.7rem; font-weight: 500; }
+        .btn-details { padding: 6px 12px; background: var(--blue); color: #fff; border: none; border-radius: 8px; font-size: 0.75rem; cursor: pointer; transition:0.2s; }
+        .btn-details:active { transform: scale(0.96); opacity:0.9; }
         
         .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
         
+        /* ===== MODAL ===== */
+        .modal-overlay { position: fixed; inset:0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); z-index:999; display:none; align-items:center; justify-content:center; padding:20px; }
+        .modal-overlay.active { display:flex; }
+        .modal-content { background:#141414; border:1px solid var(--border); border-radius:16px; padding:24px; width:100%; max-width:420px; position:relative; animation: pop 0.25s ease; }
+        @keyframes pop { from { transform:scale(0.95); opacity:0; } to { transform:scale(1); opacity:1; } }
+        .modal-close { position:absolute; top:14px; right:14px; background:none; border:none; color:var(--muted); font-size:1.5rem; cursor:pointer; }
+        .modal-title { font-size:1.1rem; font-weight:600; margin-bottom:16px; text-align:center; }
+        .detail-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:0.85rem; }
+        .detail-label { color:var(--muted); }
+        .detail-value { font-weight:500; text-align:right; max-width:60%; word-break:break-all; }
+        .pass-section { margin-top:16px; padding-top:12px; border-top:1px dashed var(--border); }
+        .pass-section label { display:block; font-size:0.7rem; color:var(--muted); margin-bottom:6px; }
+        .pass-input { width:100%; padding:10px; background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; color:var(--text); margin-bottom:10px; }
+        .btn-save-pass { width:100%; padding:11px; background:var(--success); color:#fff; border:none; border-radius:8px; font-weight:600; cursor:pointer; touch-action:manipulation; }
+        .btn-save-pass:active { transform:scale(0.98); opacity:0.9; }
+        .pass-msg { text-align:center; font-size:0.7rem; margin-top:8px; min-height:1em; }
+        .pass-msg.ok { color:var(--success); }
+        .pass-msg.err { color:var(--accent); }
+
         @media (max-width: 600px) {
-            .user-table { display: block; overflow-x: auto; }
-            .header { flex-direction: column; gap: 12px; text-align: center; }
+            .user-table { display:block; overflow-x:auto; }
+            .header { flex-direction:column; gap:12px; text-align:center; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ===== 404 PAGE (QORUNMA) ===== -->
+    <!-- 404 QORUNMASI -->
     <div id="error-page" class="error-page">
         <div class="error-code">404</div>
         <div class="error-msg">Səhifə tapılmadı və ya giriş icazəniz yoxdur.</div>
         <a href="crypto.html" class="btn-home">Giriş Səhifəsinə Qayıt</a>
     </div>
 
-    <!-- ===== ADMIN PANEL ===== -->
+    <!-- ADMIN PANEL -->
     <div id="admin-panel" class="admin-panel">
         <header class="header">
             <h1>🛡️ Admin Panel</h1>
             <button class="btn-logout" onclick="adminLogout()">Logout</button>
         </header>
 
-        <!-- STATISTIKA -->
         <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value" id="total-users">0</div>
-                <div class="stat-label">Total Users</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="today-reg">0</div>
-                <div class="stat-label">Today Registered</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="site-age">—</div>
-                <div class="stat-label">Site Age (Days)</div>
-            </div>
+            <div class="stat-card"><div class="stat-value" id="total-users">0</div><div class="stat-label">Total Users</div></div>
+            <div class="stat-card"><div class="stat-value" id="today-reg">0</div><div class="stat-label">Today Registered</div></div>
+            <div class="stat-card"><div class="stat-value" id="site-age">0</div><div class="stat-label">Site Age (Days)</div></div>
         </div>
 
-        <!-- İSTİFADƏÇİ LİSTİ -->
         <div class="card">
             <div class="card-title">👥 Registered Users</div>
-            <input type="text" class="search-box" id="search-input" placeholder="Search username, email or phone...">
+            <input type="text" class="search-box" id="search-input" placeholder="🔍 Search username, email or phone...">
             <div id="users-container">
                 <table class="user-table">
                     <thead>
@@ -98,6 +108,7 @@
                             <th>Phone</th>
                             <th>Registered</th>
                             <th>Status</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="users-body"></tbody>
@@ -107,92 +118,141 @@
         </div>
     </div>
 
+    <!-- DETAL MODALI -->
+    <div id="detail-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h3 class="modal-title">User Details</h3>
+            <div id="detail-info"></div>
+            
+            <div class="pass-section">
+                <label>🔑 Change Password</label>
+                <input type="password" class="pass-input" id="new-password" placeholder="Enter new password (min 6 chars)">
+                <button class="btn-save-pass" onclick="updatePassword()">Update Password</button>
+                <div id="pass-msg" class="pass-msg"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // 🔐 ADMIN QORUNMASI
+        // 🔐 SESSION YOXLANIŞI
         const adminSession = JSON.parse(localStorage.getItem('admin_session'));
         const errorPage = document.getElementById('error-page');
         const adminPanel = document.getElementById('admin-panel');
+        let currentEditId = null;
 
         if (!adminSession || adminSession.role !== 'admin') {
-            // Admin deyil → 404 göstər
             errorPage.classList.add('active');
             adminPanel.style.display = 'none';
-            // Tarixçəni təmizlə ki, "Geri" düyməsi ilə qayıda bilməsin
             history.replaceState(null, '', location.href);
         } else {
-            // Admin daxil olub → Paneli göstər
             errorPage.style.display = 'none';
             adminPanel.classList.add('active');
             loadAdminData();
         }
 
-        function adminLogout() {
-            localStorage.removeItem('admin_session');
-            window.location.href = 'crypto.html';
-        }
+        function adminLogout() { localStorage.removeItem('admin_session'); window.location.href = 'crypto.html'; }
 
-        // 📊 DATA YÜKLƏMƏ
+        // 📊 DATA YÜKLƏMƏ & RENDER
         function loadAdminData() {
             const allUsers = JSON.parse(localStorage.getItem('onlycrypto_users') || '[]');
             const today = new Date().toDateString();
             
-            // Statistika
             document.getElementById('total-users').textContent = allUsers.length;
             document.getElementById('today-reg').textContent = allUsers.filter(u => new Date(u.registered_at).toDateString() === today).length;
             
             const firstReg = allUsers.length > 0 ? new Date(Math.min(...allUsers.map(u => new Date(u.registered_at)))) : new Date();
-            const days = Math.floor((new Date() - firstReg) / (1000 * 60 * 60 * 24));
-            document.getElementById('site-age').textContent = allUsers.length > 0 ? days : '0';
-
+            document.getElementById('site-age').textContent = Math.floor((new Date() - firstReg) / (1000 * 60 * 60 * 24));
+            
             renderUsers(allUsers);
         }
 
         function renderUsers(users) {
             const tbody = document.getElementById('users-body');
             const emptyMsg = document.getElementById('empty-msg');
+            tbody.innerHTML = '';
             
-            if (users.length === 0) {
-                tbody.innerHTML = '';
-                emptyMsg.style.display = 'block';
-                return;
-            }
+            if (!users.length) { emptyMsg.style.display = 'block'; return; }
             emptyMsg.style.display = 'none';
 
-            tbody.innerHTML = users.map((u, i) => {
-                const regDate = new Date(u.registered_at).toLocaleString('az-AZ', { 
-                    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
-                });
-                return `
-                    <tr>
-                        <td class="muted">#${u.id?.toString().slice(-4) || i+1}</td>
-                        <td><span class="username">${escapeHtml(u.username)}</span></td>
-                        <td class="muted">${escapeHtml(u.email_masked || u.email)}</td>
-                        <td class="muted">${escapeHtml(u.phone_masked || u.phone)}</td>
-                        <td class="muted">${regDate}</td>
-                        <td><span class="badge">Active</span></td>
-                    </tr>
+            users.forEach(u => {
+                const regDate = new Date(u.registered_at).toLocaleString('az-AZ', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="muted">#${u.id?.toString().slice(-4) || '—'}</td>
+                    <td><span class="username">${escapeHtml(u.username)}</span></td>
+                    <td class="muted">${escapeHtml(u.email || '—')}</td>
+                    <td class="muted">${escapeHtml(u.phone || '—')}</td>
+                    <td class="muted">${regDate}</td>
+                    <td><span class="badge">Active</span></td>
+                    <td><button class="btn-details" data-id="${u.id}">Details</button></td>
                 `;
-            }).join('');
+                tbody.appendChild(row);
+            });
+
+            // Details button listeners
+            document.querySelectorAll('.btn-details').forEach(btn => {
+                btn.addEventListener('click', () => openModal(btn.dataset.id));
+            });
         }
 
         // 🔍 SEARCH
-        document.getElementById('search-input').addEventListener('input', (e) => {
+        document.getElementById('search-input').addEventListener('input', e => {
             const term = e.target.value.toLowerCase().trim();
-            const allUsers = JSON.parse(localStorage.getItem('onlycrypto_users') || '[]');
-            const filtered = allUsers.filter(u => 
-                u.username.toLowerCase().includes(term) ||
-                (u.email && u.email.toLowerCase().includes(term)) ||
-                (u.phone && u.phone.toLowerCase().includes(term))
-            );
-            renderUsers(filtered);
+            const all = JSON.parse(localStorage.getItem('onlycrypto_users') || '[]');
+            renderUsers(all.filter(u => u.username.toLowerCase().includes(term) || (u.email||'').includes(term) || (u.phone||'').includes(term)));
         });
 
-        // 🛡️ XSS QORUNMASI
-        function escapeHtml(str) {
-            const div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
+        // 📦 MODAL İDARƏETMƏ
+        const modal = document.getElementById('detail-modal');
+        const detailInfo = document.getElementById('detail-info');
+        const passInput = document.getElementById('new-password');
+        const passMsg = document.getElementById('pass-msg');
+
+        function openModal(id) {
+            const all = JSON.parse(localStorage.getItem('onlycrypto_users') || '[]');
+            const user = all.find(u => u.id == id);
+            if (!user) return;
+            
+            currentEditId = user.id;
+            const regDate = new Date(user.registered_at).toLocaleString('az-AZ', { weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' });
+            
+            detailInfo.innerHTML = `
+                <div class="detail-row"><span class="detail-label">Username</span><span class="detail-value">${escapeHtml(user.username)}</span></div>
+                <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">${escapeHtml(user.email || '—')}</span></div>
+                <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${escapeHtml(user.phone || '—')}</span></div>
+                <div class="detail-row"><span class="detail-label">Registered</span><span class="detail-value">${regDate}</span></div>
+            `;
+            passInput.value = '';
+            passMsg.className = 'pass-msg'; passMsg.textContent = '';
+            modal.classList.add('active');
         }
+
+        function closeModal() { modal.classList.remove('active'); currentEditId = null; }
+        modal.addEventListener('click', e => { if(e.target === modal) closeModal(); });
+
+        // 🔑 PAROL YENİLƏMƏ
+        function updatePassword() {
+            const newPass = passInput.value.trim();
+            if (!newPass || newPass.length < 6) { passMsg.className='pass-msg err'; passMsg.textContent='Parol ən az 6 simvol olmalıdır.'; return; }
+
+            const all = JSON.parse(localStorage.getItem('onlycrypto_users') || '[]');
+            const idx = all.findIndex(u => u.id == currentEditId);
+            if (idx === -1) return;
+
+            // Hash generation (matches crypto.html)
+            let hash = 0;
+            for (let i = 0; i < newPass.length; i++) { hash = ((hash << 5) - hash) + newPass.charCodeAt(i); hash |= 0; }
+            all[idx].password_hash = 'h_' + Math.abs(hash).toString(36);
+            
+            localStorage.setItem('onlycrypto_users', JSON.stringify(all));
+            passMsg.className = 'pass-msg ok'; passMsg.textContent = '✅ Parol uğurla dəyişdirildi.';
+            passInput.value = '';
+            setTimeout(closeModal, 1200);
+        }
+
+        // 🛡️ XSS QORUNMASI
+        function escapeHtml(str) { const d=document.createElement('div'); d.textContent=str||''; return d.innerHTML; }
     </script>
 </body>
 </html>
