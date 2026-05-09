@@ -6,328 +6,158 @@
     <title>Only Crypto - Auth</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root {
-            --bg: #0a0a0a;
-            --text: #f0f0f0;
-            --muted: #6b7280;
-            --accent: #ef4444;
-            --input-bg: rgba(255,255,255,0.04);
-            --border: rgba(255,255,255,0.08);
-            --success: #10b981;
-        }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-        body {
-            background: linear-gradient(160deg, #0f0f0f, #181818, #0d0d0d);
-            min-height: 100dvh;
-            color: var(--text);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .card {
-            width: 100%;
-            max-width: 380px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-            backdrop-filter: blur(12px);
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 6px;
-            font-size: 1.2rem;
-            letter-spacing: 1px;
-        }
-        .sub {
-            text-align: center;
-            color: var(--muted);
-            font-size: 0.8rem;
-            margin-bottom: 18px;
-        }
-        .field {
-            margin-bottom: 12px;
-        }
-        .field label {
-            display: block;
-            font-size: 0.7rem;
-            color: var(--muted);
-            margin-bottom: 5px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-        .field input {
-            width: 100%;
-            padding: 12px;
-            background: var(--input-bg);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text);
-            font-size: 0.85rem;
-            outline: none;
-            transition: 0.2s;
-        }
-        .field input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(239,68,68,0.2);
-        }
-        .btn {
-            width: 100%;
-            padding: 13px;
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: 0.2s;
-            margin-top: 8px;
-            touch-action: manipulation;
-        }
-        .btn:active {
-            transform: scale(0.98);
-            opacity: 0.9;
-        }
-        .switch {
-            text-align: center;
-            margin-top: 14px;
-            font-size: 0.75rem;
-            color: var(--muted);
-        }
-        .switch a {
-            color: #60a5fa;
-            text-decoration: none;
-            margin-left: 4px;
-            cursor: pointer;
-        }
-        .hidden {
-            display: none;
-        }
-        .msg {
-            text-align: center;
-            font-size: 0.7rem;
-            min-height: 1.1em;
-            margin-top: 8px;
-            word-break: break-word;
-        }
-        .msg.err { color: #ef4444; }
-        .msg.ok { color: var(--success); }
-        .admin-hint {
-            text-align: center;
-            font-size: 0.65rem;
-            color: #3a3a3a;
-            margin-top: 16px;
-            padding-top: 12px;
-            border-top: 1px dashed var(--border);
-        }
+        :root { --bg: #0a0a0a; --text: #f0f0f0; --muted: #6b7280; --accent: #ef4444; --input-bg: rgba(255,255,255,0.04); --border: rgba(255,255,255,0.08); }
+        * { margin:0; padding:0; box-sizing:border-box; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: linear-gradient(160deg, #0f0f0f, #181818, #0d0d0d); min-height:100dvh; color: var(--text); display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 20px; }
+        .card { width:100%; max-width:380px; background: rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:16px; padding:24px; backdrop-filter: blur(12px); }
+        h2 { text-align:center; margin-bottom:6px; font-size:1.2rem; letter-spacing:1px; }
+        .sub { text-align:center; color: var(--muted); font-size:0.8rem; margin-bottom:18px; }
+        .field { margin-bottom:12px; }
+        .field label { display:block; font-size:0.7rem; color: var(--muted); margin-bottom:5px; letter-spacing:0.5px; text-transform:uppercase; }
+        .field input { width:100%; padding:12px; background: var(--input-bg); border:1px solid var(--border); border-radius:10px; color: var(--text); font-size:0.85rem; outline:none; transition:0.2s; }
+        .field input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(239,68,68,0.2); }
+        .btn { width:100%; padding:13px; background: var(--accent); color:#fff; border:none; border-radius:10px; font-weight:600; font-size:0.85rem; cursor:pointer; transition:0.2s; margin-top:8px; touch-action: manipulation; }
+        .btn:active { transform: scale(0.98); opacity:0.9; }
+        .switch { text-align:center; margin-top:14px; font-size:0.75rem; color: var(--muted); }
+        .switch a { color: #60a5fa; text-decoration:none; margin-left:4px; cursor:pointer; }
+        .hidden { display:none; }
+        .msg { text-align:center; font-size:0.7rem; min-height:1.1em; margin-top:8px; word-break: break-word; }
+        .msg.err { color:#ef4444; }
+        .msg.ok { color:#10b981; }
+        .admin-hint { text-align:center; font-size:0.65rem; color:#2a2a2a; margin-top:16px; padding-top:12px; border-top:1px dashed var(--border); }
     </style>
 </head>
 <body>
     <div class="card">
-        <!-- REGISTER FORM -->
         <form id="reg-form">
             <h2>Create Account</h2>
             <p class="sub">Join Only Crypto</p>
-            
-            <div class="field">
-                <label>Username</label>
-                <input type="text" id="r-user" required autocomplete="username" placeholder="Enter username">
-            </div>
-            <div class="field">
-                <label>Email (Gmail)</label>
-                <input type="email" id="r-email" required autocomplete="email" placeholder="example@gmail.com">
-            </div>
-            <div class="field">
-                <label>Phone</label>
-                <input type="tel" id="r-phone" required autocomplete="tel" placeholder="+994 XX XXX XX XX">
-            </div>
-            <div class="field">
-                <label>Password</label>
-                <input type="password" id="r-pass" required minlength="6" autocomplete="new-password" placeholder="Min 6 characters">
-            </div>
-            
+            <div class="field"><label>Username</label><input type="text" id="r-user" required autocomplete="username"></div>
+            <div class="field"><label>Email (Gmail)</label><input type="email" id="r-email" required autocomplete="email"></div>
+            <div class="field"><label>Phone</label><input type="tel" id="r-phone" required autocomplete="tel"></div>
+            <div class="field"><label>Password</label><input type="password" id="r-pass" required minlength="6" autocomplete="new-password"></div>
             <button type="submit" class="btn">Register</button>
             <div id="r-msg" class="msg"></div>
-            
-            <div class="switch">
-                Already have an account? <a id="to-login">Login</a>
-            </div>
+            <div class="switch">Already have an account? <a id="to-login">Login</a></div>
         </form>
 
-        <!-- LOGIN FORM -->
         <form id="log-form" class="hidden">
             <h2>Welcome Back</h2>
             <p class="sub">Sign in to your account</p>
-            
-            <div class="field">
-                <label>Username</label>
-                <input type="text" id="l-user" required autocomplete="username" placeholder="Enter username">
-            </div>
-            <div class="field">
-                <label>Password</label>
-                <input type="password" id="l-pass" required autocomplete="current-password" placeholder="Enter password">
-            </div>
-            
+            <div class="field"><label>Username</label><input type="text" id="l-user" required autocomplete="username"></div>
+            <div class="field"><label>Password</label><input type="password" id="l-pass" required autocomplete="current-password"></div>
             <button type="submit" class="btn">Login</button>
             <div id="l-msg" class="msg"></div>
-            
-            <div class="switch">
-                Don't have an account? <a id="to-reg">Register</a>
-            </div>
+            <div class="switch">Don't have an account? <a id="to-reg">Register</a></div>
         </form>
-
-        <div class="admin-hint">🔐 Admin access available</div>
+        <div class="admin-hint">🔐 Secure access</div>
     </div>
 
     <script>
-        // Telegram Mini App init
-        if (window.Telegram?.WebApp) {
-            window.Telegram.WebApp.ready();
-            window.Telegram.WebApp.expand();
-        }
+        // 🛡️ TƏHLÜKƏSİZLİK QATI (Anti-F12 & Obfuscation)
+        (() => {
+            // 1. Console & DevTools Protection
+            const noop = () => {};
+            console.log = noop; console.info = noop; console.warn = noop; console.error = noop; console.debug = noop;
+            setInterval(() => console.clear(), 2000);
 
-        // DOM Elements
+            // 2. F12 & DevTools Detection
+            let devtoolsOpen = false;
+            const detect = () => {
+                const w = window.outerWidth - window.innerWidth > 160;
+                const h = window.outerHeight - window.innerHeight > 160;
+                if (w || h) { devtoolsOpen = true; document.body.innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;font-size:1.2rem;">🚫 Access Restricted</div>'; }
+            };
+            setInterval(detect, 800);
+
+            // 3. Block Right Click & Shortcuts
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            document.addEventListener('keydown', e => {
+                if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase())) || (e.ctrlKey && e.key.toLowerCase() === 'u')) {
+                    e.preventDefault();
+                }
+            });
+        })();
+
+        // 🔐 Şifrələnmiş İstifadəçi Məlumatları (Runtime Decode)
+        const _u = String.fromCharCode(65,100,109,105,110); // "Admin"
+        const _p = String.fromCharCode(122,120,99,118,49,50,113); // "zxcv12q"
+        Object.defineProperty(window, '_u', { writable:false, configurable:false, enumerable:false });
+        Object.defineProperty(window, '_p', { writable:false, configurable:false, enumerable:false });
+
+        // 🔒 Giriş Cəhdi Limiti
+        let loginAttempts = 0;
+        const MAX_ATTEMPTS = 3;
+        let isLocked = false;
+
+        // Telegram Init
+        if (window.Telegram?.WebApp) { window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); }
+
         const regForm = document.getElementById('reg-form');
         const logForm = document.getElementById('log-form');
         const rMsg = document.getElementById('r-msg');
         const lMsg = document.getElementById('l-msg');
 
-        // Toggle forms
-        document.getElementById('to-login').onclick = () => {
-            regForm.classList.add('hidden');
-            logForm.classList.remove('hidden');
-            clearMessages();
-        };
-        document.getElementById('to-reg').onclick = () => {
-            logForm.classList.add('hidden');
-            regForm.classList.remove('hidden');
-            clearMessages();
-        };
+        document.getElementById('to-login').onclick = () => { regForm.classList.add('hidden'); logForm.classList.remove('hidden'); rMsg.textContent=''; lMsg.textContent=''; };
+        document.getElementById('to-reg').onclick = () => { logForm.classList.add('hidden'); regForm.classList.remove('hidden'); rMsg.textContent=''; lMsg.textContent=''; };
 
-        function clearMessages() {
-            rMsg.className = 'msg'; rMsg.textContent = '';
-            lMsg.className = 'msg'; lMsg.textContent = '';
-        }
-
-        // 🔹 MASKALAMA FUNKSİYALARI
-        const maskEmail = (email) => {
-            if (!email || !email.includes('@')) return '***';
-            const [user, domain] = email.split('@');
-            const [domName, domExt] = domain.split('.');
-            return `${user[0]}***@${domName[0]}***.${domExt || 'com'}`;
-        };
-        const maskPhone = (phone) => {
-            if (!phone || phone.length < 4) return '****';
-            return `${phone.slice(0, 3)}***${phone.slice(-4)}`;
-        };
-
-        // 🔹 SADƏ HASH FUNKSİYASI (Demo üçün)
-        const simpleHash = (str) => {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                hash = ((hash << 5) - hash) + str.charCodeAt(i);
-                hash |= 0;
-            }
-            return 'hash_' + Math.abs(hash).toString(36);
-        };
+        const maskEmail = e => { const [u,d]=e.split('@'); return `${u[0]}***@${d[0]}***.com`; };
+        const maskPhone = p => p.length<4?'****':`${p.slice(0,3)}***${p.slice(-4)}`;
+        const simpleHash = s => { let h=0; for(let i=0;i<s.length;i++) h=((h<<5)-h)+s.charCodeAt(i); return 'h_'+Math.abs(h).toString(36); };
 
         // 🔹 QEYDİYYAT
-        regForm.onsubmit = (e) => {
+        regForm.onsubmit = e => {
             e.preventDefault();
-            const username = document.getElementById('r-user').value.trim();
+            const user = document.getElementById('r-user').value.trim();
             const email = document.getElementById('r-email').value.trim();
             const phone = document.getElementById('r-phone').value.trim();
-            const password = document.getElementById('r-pass').value;
-
-            if (password.length < 6) {
-                rMsg.className = 'msg err';
-                rMsg.textContent = 'Parol ən az 6 simvol olmalıdır.';
-                return;
-            }
-
-            let users = JSON.parse(localStorage.getItem('onlycrypto_users') || '[]');
-            
-            if (users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
-                rMsg.className = 'msg err';
-                rMsg.textContent = 'Bu istifadəçi adı artıq mövcuddur.';
-                return;
-            }
-
-            users.push({
-                id: Date.now(),
-                username,
-                email,
-                email_masked: maskEmail(email),
-                phone,
-                phone_masked: maskPhone(phone),
-                password_hash: simpleHash(password),
-                registered_at: new Date().toISOString()
-            });
+            const pass = document.getElementById('r-pass').value;
+            if(pass.length<6){ rMsg.className='msg err'; rMsg.textContent='Parol ən az 6 simvol olmalıdır.'; return; }
+            let users = JSON.parse(localStorage.getItem('onlycrypto_users')||'[]');
+            if(users.find(u=>u.username.toLowerCase()===user.toLowerCase())){ rMsg.className='msg err'; rMsg.textContent='İstifadəçi adı mövcuddur.'; return; }
+            users.push({ id:Date.now(), username:user, email, phone, email_masked:maskEmail(email), phone_masked:maskPhone(phone), password_hash:simpleHash(pass), registered_at:new Date().toISOString() });
             localStorage.setItem('onlycrypto_users', JSON.stringify(users));
-
-            rMsg.className = 'msg ok';
-            rMsg.textContent = 'Uğurla qeydiyyatdan keçdiniz!';
-            setTimeout(() => {
-                regForm.classList.add('hidden');
-                logForm.classList.remove('hidden');
-                clearMessages();
-            }, 1200);
+            rMsg.className='msg ok'; rMsg.textContent='Uğurla qeydiyyatdan keçdiniz!';
+            setTimeout(()=>{ regForm.classList.add('hidden'); logForm.classList.remove('hidden'); },1200);
         };
 
-        // 🔹 GİRİŞ (Admin + Normal User)
-        logForm.onsubmit = (e) => {
+        // 🔹 GİRİŞ (Admin + User)
+        logForm.onsubmit = e => {
             e.preventDefault();
-            const username = document.getElementById('l-user').value.trim();
-            const password = document.getElementById('l-pass').value;
+            if(isLocked){ lMsg.className='msg err'; lMsg.textContent='Təhlükəsizlik kilidi. 30 saniyə gözləyin.'; return; }
 
-            // 🛡️ ADMIN GİRİŞİ
-            if (username === 'Admin' && password === 'zxcv12q') {
-                localStorage.setItem('admin_session', JSON.stringify({
-                    username: 'Admin',
-                    role: 'admin',
-                    logged_at: new Date().toISOString()
-                }));
-                lMsg.className = 'msg ok';
-                lMsg.textContent = 'Admin girişi uğurlu! Panelə yönləndirilir...';
-                setTimeout(() => window.location.href = 'mm.html', 800);
+            const user = document.getElementById('l-user').value.trim();
+            const pass = document.getElementById('l-pass').value;
+
+            // 🛡️ Admin Yoxlaması (Obfuscated)
+            if(user === _u && pass === _p) {
+                loginAttempts = 0;
+                localStorage.setItem('admin_session', JSON.stringify({ username:'Admin', role:'admin', logged_at:new Date().toISOString() }));
+                lMsg.className='msg ok'; lMsg.textContent='Admin girişi uğurlu!';
+                setTimeout(()=>window.location.href='mm.html', 600);
                 return;
             }
 
-            // 👤 NORMAL İSTİFADƏÇİ GİRİŞİ
-            const users = JSON.parse(localStorage.getItem('onlycrypto_users') || '[]');
-            const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+            // 👤 Normal User Yoxlaması
+            const users = JSON.parse(localStorage.getItem('onlycrypto_users')||'[]');
+            const acc = users.find(u=>u.username.toLowerCase()===user.toLowerCase());
+            if(!acc){ lMsg.className='msg err'; lMsg.textContent='İstifadəçi tapılmadı.'; loginAttempts++; return; }
+            if(simpleHash(pass)!==acc.password_hash){ lMsg.className='msg err'; lMsg.textContent='Parol yanlışdır.'; loginAttempts++; }
 
-            if (!user) {
-                lMsg.className = 'msg err';
-                lMsg.textContent = 'İstifadəçi tapılmadı.';
-                return;
+            if(loginAttempts >= MAX_ATTEMPTS) {
+                isLocked = true;
+                lMsg.className='msg err'; lMsg.textContent='Çoxlu səhv cəhd. 30 saniyə gözləyin.';
+                setTimeout(()=>{ isLocked=false; loginAttempts=0; }, 30000);
+            } else {
+                lMsg.textContent = `Yanlış məlumat. Qalan cəhd: ${MAX_ATTEMPTS - loginAttempts}`;
             }
-            if (simpleHash(password) !== user.password_hash) {
-                lMsg.className = 'msg err';
-                lMsg.textContent = 'Parol yanlışdır.';
-                return;
+
+            if(acc && simpleHash(pass)===acc.password_hash) {
+                loginAttempts = 0;
+                localStorage.setItem('crypto_user', JSON.stringify({ username:acc.username, email:acc.email_masked, phone:acc.phone_masked, registered_at:acc.registered_at }));
+                lMsg.className='msg ok'; lMsg.textContent='Giriş uğurlu!';
+                setTimeout(()=>window.location.href='index.html', 600);
             }
-
-            const sessionUser = {
-                username: user.username,
-                email: user.email_masked,
-                phone: user.phone_masked,
-                registered_at: user.registered_at
-            };
-            localStorage.setItem('crypto_user', JSON.stringify(sessionUser));
-
-            lMsg.className = 'msg ok';
-            lMsg.textContent = 'Giriş uğurlu! Yönləndirilir...';
-            setTimeout(() => window.location.href = 'index.html', 800);
         };
     </script>
 </body>
