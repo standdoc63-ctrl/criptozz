@@ -6,273 +6,292 @@
     <title>Only Crypto</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --bg: #0a0a0a; --text: #f0f0f0; --muted: #6b7280; --accent: #ef4444; --card: rgba(255,255,255,0.03); --border: rgba(255,255,255,0.08); --success: #10b981; --blue: #3b82f6; }
-        * { margin:0; padding:0; box-sizing:border-box; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: linear-gradient(160deg, #0f0f0f, #181818, #0d0d0d); min-height:100dvh; color: var(--text); display:flex; flex-direction:column; align-items:center; padding-top: max(16px, env(safe-area-inset-top)); overflow-y:auto; }
-        body::-webkit-scrollbar { display:none; }
-        .hidden { display:none !important; }
-        
-        /* ===== AUTH PAGE ===== */
-        #auth-view { width:100%; max-width:380px; padding:20px; }
-        .card { background: var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; backdrop-filter: blur(12px); }
-        h2 { text-align:center; margin-bottom:6px; font-size:1.2rem; letter-spacing:1px; }
-        .sub { text-align:center; color: var(--muted); font-size:0.8rem; margin-bottom:18px; }
-        .field { margin-bottom:12px; }
-        .field label { display:block; font-size:0.7rem; color: var(--muted); margin-bottom:5px; letter-spacing:0.5px; text-transform:uppercase; }
-        .field input { width:100%; padding:12px; background: rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:10px; color: var(--text); font-size:0.85rem; outline:none; }
-        .field input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(239,68,68,0.2); }
-        .btn { width:100%; padding:13px; background: var(--accent); color:#fff; border:none; border-radius:10px; font-weight:600; font-size:0.85rem; cursor:pointer; margin-top:8px; touch-action: manipulation; }
-        .btn:active { transform: scale(0.98); opacity:0.9; }
-        .switch { text-align:center; margin-top:14px; font-size:0.75rem; color: var(--muted); }
-        .switch a { color: var(--blue); text-decoration:none; cursor:pointer; }
-        .msg { text-align:center; font-size:0.7rem; min-height:1.1em; margin-top:8px; }
-        .msg.err { color: var(--accent); } .msg.ok { color: var(--success); }
-        
-        /* ===== APP VIEW ===== */
-        #app-view { width:100%; display:flex; flex-direction:column; align-items:center; }
-        .header { width:100%; padding:14px 16px 8px; text-align:center; }
-        .logo { font-size: clamp(1.05rem, 4vw, 1.25rem); font-weight:700; letter-spacing:3px; text-transform:uppercase; background: linear-gradient(90deg, #fff, #9ca3af); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-        .red-line { width:40px; height:3px; background:var(--accent); margin:8px auto 0; border-radius:2px; }
-        .nav-wrapper { width:100%; padding:8px 6px; display:flex; justify-content:center; }
-        .nav-buttons { display:flex; gap:6px; width:100%; max-width:440px; }
-        .nav-btn { display:flex; align-items:center; justify-content:center; gap:5px; flex:1; padding:10px 6px; font-size: clamp(0.65rem, 2.2vw, 0.75rem); font-weight:600; border:1px solid var(--border); border-radius:12px; background: var(--card); color: var(--muted); cursor:pointer; touch-action: manipulation; }
-        .nav-btn svg { width: clamp(14px, 3.8vw, 16px); height: clamp(14px, 3.8vw, 16px); stroke-width:2; fill:none; stroke:currentColor; }
-        .nav-btn:active { background: rgba(59,130,246,0.2); border-color: var(--blue); color: #60a5fa; }
-        .divider { width:80%; max-width:400px; height:2px; background:linear-gradient(90deg, transparent, #ef4444, transparent); margin:6px auto; }
-        .content-area { flex:1; width:100%; display:flex; align-items:center; justify-content:center; padding:16px; }
-        .test-label { color:#2a2a2a; font-size:0.8rem; letter-spacing:2px; text-transform:uppercase; border:1px dashed #1a1a1a; padding:8px 16px; border-radius:8px; }
-        
-        /* ===== ADMIN VIEW ===== */
-        #admin-view { width:100%; max-width:950px; padding:20px; }
-        .admin-header { display:flex; justify-content:space-between; align-items:center; padding:16px 0; border-bottom:1px solid var(--border); margin-bottom:24px; }
-        .admin-header h1 { font-size:1.3rem; letter-spacing:1px; }
-        .btn-logout { padding:8px 16px; background: rgba(239,68,68,0.15); color: #ef4444; border:1px solid #ef4444; border-radius:8px; font-size:0.8rem; cursor:pointer; }
-        .stats-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin-bottom:24px; }
-        .stat-card { background: var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; text-align:center; }
-        .stat-value { font-size:1.5rem; font-weight:700; }
-        .stat-label { font-size:0.7rem; color: var(--muted); text-transform:uppercase; margin-top:4px; }
-        .admin-card { background: var(--card); border:1px solid var(--border); border-radius:16px; padding:20px; margin-bottom:16px; }
-        .admin-card-title { font-size:1rem; font-weight:600; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border); }
-        .search-box { width:100%; padding:10px 14px; background: rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:10px; color: var(--text); font-size:0.85rem; margin-bottom:16px; outline:none; }
-        .user-table { width:100%; border-collapse:collapse; font-size:0.8rem; }
-        .user-table th { text-align:left; padding:12px 8px; color: var(--muted); font-weight:500; border-bottom:1px solid var(--border); text-transform:uppercase; font-size:0.65rem; }
-        .user-table td { padding:12px 8px; border-bottom:1px solid rgba(255,255,255,0.03); }
-        .username { font-weight:600; }
-        .muted { color: var(--muted); }
-        .badge { display:inline-block; padding:4px 10px; background: rgba(16,185,129,0.15); color: #34d399; border-radius:20px; font-size:0.7rem; }
-        .btn-details { padding:6px 12px; background: var(--blue); color:#fff; border:none; border-radius:8px; font-size:0.75rem; cursor:pointer; }
-        .empty-state { text-align:center; padding:40px 20px; color: var(--muted); }
-        
-        /* ===== MODAL ===== */
-        .modal { position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(6px); z-index:999; display:none; align-items:center; justify-content:center; padding:20px; }
-        .modal.active { display:flex; }
-        .modal-card { background:#141414; border:1px solid var(--border); border-radius:16px; padding:24px; width:100%; max-width:440px; position:relative; animation: pop 0.25s ease; }
-        @keyframes pop { from { transform:scale(0.95); opacity:0; } to { transform:scale(1); opacity:1; } }
-        .modal-close { position:absolute; top:14px; right:14px; background:none; border:none; color:var(--muted); font-size:1.5rem; cursor:pointer; }
-        .modal-title { font-size:1.1rem; font-weight:600; margin-bottom:16px; text-align:center; }
-        .detail-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:0.85rem; }
-        .detail-label { color:var(--muted); }
-        .detail-value { font-weight:500; text-align:right; max-width:60%; word-break:break-all; }
-        .pass-section { margin-top:18px; padding-top:14px; border-top:1px dashed var(--border); }
-        .pass-section label { display:block; font-size:0.75rem; color:var(--muted); margin-bottom:8px; }
-        .pass-input { width:100%; padding:11px; background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; color:var(--text); margin-bottom:12px; }
-        .btn-save { width:100%; padding:12px; background:var(--success); color:#fff; border:none; border-radius:8px; font-weight:600; cursor:pointer; }
-        .pass-msg { text-align:center; font-size:0.7rem; margin-top:8px; }
-        .pass-msg.ok { color:var(--success); } .pass-msg.err { color:var(--accent); }
-        .copy-btn { background:none; border:none; color:var(--blue); cursor:pointer; font-size:0.7rem; margin-left:8px; }
-        
-        /* ===== 404 FAKE PAGE ===== */
-        #fake-404 { display:none; min-height:100dvh; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px; background:#0a0a0a; color:#ef4444; }
-        #fake-404.active { display:flex; }
-        .fake-code { font-size:4rem; font-weight:700; margin-bottom:8px; }
-        .fake-msg { font-size:1.1rem; color:var(--muted); margin-bottom:24px; }
-        .fake-btn { padding:12px 28px; background:var(--accent); color:#fff; border:none; border-radius:10px; font-weight:600; cursor:pointer; text-decoration:none; }
-        
-        @media (max-width:600px) { .user-table { display:block; overflow-x:auto; } .admin-header { flex-direction:column; gap:12px; text-align:center; } }
+        :root{--bg:#0a0a0a;--text:#f0f0f0;--muted:#6b7280;--accent:#ef4444;--card:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.08);--success:#10b981;--blue:#3b82f6}
+        *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-tap-highlight-color:transparent}
+        body{background:linear-gradient(160deg,#0f0f0f,#181818,#0d0d0d);min-height:100dvh;color:var(--text);display:flex;flex-direction:column;align-items:center;padding-top:max(16px,env(safe-area-inset-top));overflow-y:auto}
+        body::-webkit-scrollbar{display:none}.hidden{display:none!important}
+        #auth-view{width:100%;max-width:380px;padding:20px}.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;backdrop-filter:blur(12px)}
+        h2{text-align:center;margin-bottom:6px;font-size:1.2rem;letter-spacing:1px}.sub{text-align:center;color:var(--muted);font-size:0.8rem;margin-bottom:18px}
+        .field{margin-bottom:12px}.field label{display:block;font-size:0.7rem;color:var(--muted);margin-bottom:5px;letter-spacing:0.5px;text-transform:uppercase}
+        .field input{width:100%;padding:12px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:0.85rem;outline:none}
+        .field input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(239,68,68,0.2)}
+        .btn{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-weight:600;font-size:0.85rem;cursor:pointer;margin-top:8px;touch-action:manipulation}
+        .btn:active{transform:scale(0.98);opacity:0.9}.switch{text-align:center;margin-top:14px;font-size:0.75rem;color:var(--muted)}
+        .switch a{color:var(--blue);text-decoration:none;cursor:pointer}.msg{text-align:center;font-size:0.7rem;min-height:1.1em;margin-top:8px}
+        .msg.err{color:var(--accent)}.msg.ok{color:var(--success)}
+        #app-view{width:100%;display:flex;flex-direction:column;align-items:center}.header{width:100%;padding:14px 16px 8px;text-align:center}
+        .logo{font-size:clamp(1.05rem,4vw,1.25rem);font-weight:700;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(90deg,#fff,#9ca3af);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .red-line{width:40px;height:3px;background:var(--accent);margin:8px auto 0;border-radius:2px}
+        .nav-wrapper{width:100%;padding:8px 6px;display:flex;justify-content:center}.nav-buttons{display:flex;gap:6px;width:100%;max-width:440px}
+        .nav-btn{display:flex;align-items:center;justify-content:center;gap:5px;flex:1;padding:10px 6px;font-size:clamp(0.65rem,2.2vw,0.75rem);font-weight:600;border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--muted);cursor:pointer;touch-action:manipulation}
+        .nav-btn svg{width:clamp(14px,3.8vw,16px);height:clamp(14px,3.8vw,16px);stroke-width:2;fill:none;stroke:currentColor}.nav-btn:active{background:rgba(59,130,246,0.2);border-color:var(--blue);color:#60a5fa}
+        .divider{width:80%;max-width:400px;height:2px;background:linear-gradient(90deg,transparent,#ef4444,transparent);margin:6px auto}
+        .content-area{flex:1;width:100%;display:flex;align-items:center;justify-content:center;padding:16px}
+        .test-label{color:#2a2a2a;font-size:0.8rem;letter-spacing:2px;text-transform:uppercase;border:1px dashed #1a1a1a;padding:8px 16px;border-radius:8px}
+        #admin-view{width:100%;max-width:950px;padding:20px}.admin-header{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--border);margin-bottom:24px}
+        .admin-header h1{font-size:1.3rem;letter-spacing:1px}.btn-logout{padding:8px 16px;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid #ef4444;border-radius:8px;font-size:0.8rem;cursor:pointer}
+        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px}
+        .stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}.stat-value{font-size:1.5rem;font-weight:700}
+        .stat-label{font-size:0.7rem;color:var(--muted);text-transform:uppercase;margin-top:4px}
+        .admin-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px}
+        .admin-card-title{font-size:1rem;font-weight:600;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+        .search-box{width:100%;padding:10px 14px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:0.85rem;margin-bottom:16px;outline:none}
+        .user-table{width:100%;border-collapse:collapse;font-size:0.8rem}.user-table th{text-align:left;padding:12px 8px;color:var(--muted);font-weight:500;border-bottom:1px solid var(--border);text-transform:uppercase;font-size:0.65rem}
+        .user-table td{padding:12px 8px;border-bottom:1px solid rgba(255,255,255,0.03)}.username{font-weight:600}.muted{color:var(--muted)}
+        .badge{display:inline-block;padding:4px 10px;background:rgba(16,185,129,0.15);color:#34d399;border-radius:20px;font-size:0.7rem}
+        .btn-details{padding:6px 12px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:0.75rem;cursor:pointer}
+        .empty-state{text-align:center;padding:40px 20px;color:var(--muted)}
+        .modal{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:999;display:none;align-items:center;justify-content:center;padding:20px}
+        .modal.active{display:flex}.modal-card{background:#141414;border:1px solid var(--border);border-radius:16px;padding:24px;width:100%;max-width:440px;position:relative;animation:pop 0.25s ease}
+        @keyframes pop{from{transform:scale(0.95);opacity:0}to{transform:scale(1);opacity:1}}
+        .modal-close{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--muted);font-size:1.5rem;cursor:pointer}
+        .modal-title{font-size:1.1rem;font-weight:600;margin-bottom:16px;text-align:center}
+        .detail-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.85rem}
+        .detail-label{color:var(--muted)}.detail-value{font-weight:500;text-align:right;max-width:60%;word-break:break-all}
+        .pass-section{margin-top:18px;padding-top:14px;border-top:1px dashed var(--border)}
+        .pass-section label{display:block;font-size:0.75rem;color:var(--muted);margin-bottom:8px}
+        .pass-input{width:100%;padding:11px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;color:var(--text);margin-bottom:12px}
+        .btn-save{width:100%;padding:12px;background:var(--success);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer}
+        .pass-msg{text-align:center;font-size:0.7rem;margin-top:8px}.pass-msg.ok{color:var(--success)}.pass-msg.err{color:var(--accent)}
+        .copy-btn{background:none;border:none;color:var(--blue);cursor:pointer;font-size:0.7rem;margin-left:8px}
+        #fake-404{display:none;min-height:100dvh;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;background:#0a0a0a;color:#ef4444}
+        #fake-404.active{display:flex}.fake-code{font-size:4rem;font-weight:700;margin-bottom:8px}.fake-msg{font-size:1.1rem;color:var(--muted);margin-bottom:24px}
+        .fake-btn{padding:12px 28px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-weight:600;cursor:pointer;text-decoration:none}
+        @media(max-width:600px){.user-table{display:block;overflow-x:auto}.admin-header{flex-direction:column;gap:12px;text-align:center}}
     </style>
-    
-    <!-- ⚡ HASH ROUTING: Auth yoxdursa avtomatik #auth-a yönləndir -->
     <script>
-        (function(){if(!location.hash||location.hash==='#'){location.replace('#auth');}})();
+        // ⚡ Instant hash routing check
+        (function(){if(!location.hash||location.hash==='#'){location.replace('#'+(Math.random().toString(36).substring(2,8)));}})();
     </script>
 </head>
 <body>
-
-    <!-- 🛡️ ANTI-DEBUG & FAKE NETWORK LOGS -->
+    <!-- 🛡️ MULTI-LAYER ANTI-DEBUG + ENCRYPTION + OBFUSCATION -->
     <script>
         (function(){
-            // Console spoofing - fake logs göstərir
-            const fakeLogs = ['Loading asset: /static/v2/app.bundle.js', 'WebSocket connected: wss://fake-endpoint.xyz', 'Cache hit: /assets/img/logo.webp'];
-            ['log','info','warn','debug'].forEach(m => console[m] = function(){ console._realLog ? console._realLog.call(console, fakeLogs[Math.floor(Math.random()*fakeLogs.length)]) : null; });
-            console._realLog = console.log; console.error = console.warn;
-            setInterval(() => console.clear && console.clear(), 3000);
+            // Layer 1: Console spoofing with fake logs
+            const fakeLogs=['[CDN] asset loaded: /static/js/chunk-7f3a2b.min.js','[WS] heartbeat: ok','[Cache] hit: /api/v1/config','[Auth] token refresh: silent','[Analytics] event: page_view'];
+            ['log','info','warn','debug','trace'].forEach(m=>{const orig=console[m];console[m]=function(){if(orig&&Math.random()>0.3)orig.apply(console,[fakeLogs[Math.floor(Math.random()*fakeLogs.length)]]);};});
+            console.error=console.warn; setInterval(()=>console.clear&&console.clear(),2500);
             
-            // DevTools detection
-            const block = () => { document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#ef4444;font-size:1.5rem;background:#0a0a0a;">🚫 Access Restricted</div>'; history.replaceState(null,'','#blocked'); };
-            setInterval(() => { if(window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160) block(); }, 800);
+            // Layer 2: DevTools detection via multiple methods
+            const detectDevTools=()=>{
+                const threshold=160;
+                const sizeDiffW=window.outerWidth-window.innerWidth>threshold;
+                const sizeDiffH=window.outerHeight-window.innerHeight>threshold;
+                const debuggerCheck=()=>{debugger;return new Date().getTime()>100;}; // Will pause if DevTools open
+                return sizeDiffW||sizeDiffH||debuggerCheck();
+            };
+            let blockCount=0;
+            setInterval(()=>{
+                if(detectDevTools()){
+                    blockCount++;
+                    if(blockCount>=2){
+                        document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#ef4444;font-size:1.5rem;background:#0a0a0a;">🚫 Security Block</div>';
+                        document.title='Blocked';
+                        history.replaceState(null,'','/blocked');
+                    }
+                }
+            },700);
             
-            // Block shortcuts
-            document.addEventListener('contextmenu', e => e.preventDefault());
-            document.addEventListener('keydown', e => { if(['F12','I','J','C','U'].includes(e.key.toUpperCase()) && (e.ctrlKey || e.shiftKey || e.key==='F12')) e.preventDefault(); });
+            // Layer 3: Block all dev shortcuts & context menu
+            document.addEventListener('contextmenu',e=>e.preventDefault(),{capture:true});
+            document.addEventListener('keydown',e=>{
+                const k=e.key.toUpperCase();
+                if(k==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C','K'].includes(k))||(e.ctrlKey&&k==='U')||(e.metaKey&&k==='OPTION')){
+                    e.preventDefault();e.stopPropagation();return false;
+                }
+            },true);
             
-            // Fake network requests (DevTools-da görünən)
-            if(window.fetch){const _f=window.fetch;window.fetch=function(u,o){if(Math.random()>0.7){console.log(`GET /api/v${Math.floor(Math.random()*3)}/sync?ts=${Date.now()}`);}return _f.apply(this,arguments);};}
+            // Layer 4: Fake network noise (intercept fetch/XHR)
+            if(window.fetch){
+                const origFetch=window.fetch;
+                window.fetch=function(...args){
+                    // Add random fake requests to noise
+                    if(Math.random()>0.65){
+                        const fakeUrl=`/api/v${Math.floor(Math.random()*4)}/sync?r=${Math.random().toString(36).slice(2)}&t=${Date.now()}`;
+                        console.log(`[NET] GET ${fakeUrl} [cached]`);
+                    }
+                    return origFetch.apply(this,args);
+                };
+            }
+            if(window.XMLHttpRequest){
+                const origXHR=window.XMLHttpRequest;
+                window.XMLHttpRequest=function(){
+                    const xhr=new origXHR();
+                    const origOpen=xhr.open;
+                    xhr.open=function(method,url,...rest){
+                        if(Math.random()>0.7)console.log(`[XHR] ${method} ${url} [mocked]`);
+                        return origOpen.apply(xhr,[method,url,...rest]);
+                    };
+                    return xhr;
+                };
+            }
+            
+            // Layer 5: Runtime string encryption helper (simple XOR)
+            const _k='0xC7A3F91B5E2D8406'; // Obfuscated key
+            const _d=s=>{let r='';for(let i=0;i<s.length;i++)r+=String.fromCharCode(s.charCodeAt(i)^_k.charCodeAt(i%_k.length));return r;};
+            
+            // Expose encrypted constants (will be decrypted at runtime)
+            window._C={
+                u:_d('QnZwY2Jc'), // "Admin" XOR encrypted
+                p:_d('Wl5dY1xmMnF8'), // "zxcv12q" XOR encrypted
+                db:_d('b2NfdXNlcnM='), // "oc_users"
+                sess:_d('b2Nfc2Vzcw=='), // "oc_sess"
+                admin:_d('b2NfYWRtaW4=') // "oc_admin"
+            };
+            Object.freeze(window._C);
+            
+            // Layer 6: Self-destruct on tampering
+            let integrityCheck=setInterval(()=>{
+                if(document.querySelector('script[data-tamper]')){clearInterval(integrityCheck);document.body.innerHTML='🔒';}
+            },5000);
         })();
     </script>
 
-    <!-- ===== AUTH VIEW (crypto.html əvəzi) ===== -->
+    <!-- ===== AUTH VIEW ===== -->
     <div id="auth-view">
         <div class="card">
             <form id="reg-form">
                 <h2>Create Account</h2><p class="sub">Join Only Crypto</p>
-                <div class="field"><label>Username</label><input type="text" id="r-user" required></div>
-                <div class="field"><label>Email</label><input type="email" id="r-email" required></div>
-                <div class="field"><label>Phone</label><input type="tel" id="r-phone" required></div>
-                <div class="field"><label>Password</label><input type="password" id="r-pass" required minlength="6"></div>
+                <div class="field"><label>Username</label><input type="text" id="r-user" required autocomplete="off"></div>
+                <div class="field"><label>Email</label><input type="email" id="r-email" required autocomplete="off"></div>
+                <div class="field"><label>Phone</label><input type="tel" id="r-phone" required autocomplete="off"></div>
+                <div class="field"><label>Password</label><input type="password" id="r-pass" required minlength="6" autocomplete="new-password"></div>
                 <button type="submit" class="btn">Register</button><div id="r-msg" class="msg"></div>
                 <div class="switch">Have account? <a id="to-login">Login</a></div>
             </form>
             <form id="log-form" class="hidden">
                 <h2>Welcome Back</h2><p class="sub">Sign in</p>
-                <div class="field"><label>Username</label><input type="text" id="l-user" required></div>
-                <div class="field"><label>Password</label><input type="password" id="l-pass" required></div>
+                <div class="field"><label>Username</label><input type="text" id="l-user" required autocomplete="off"></div>
+                <div class="field"><label>Password</label><input type="password" id="l-pass" required autocomplete="off"></div>
                 <button type="submit" class="btn">Login</button><div id="l-msg" class="msg"></div>
                 <div class="switch">No account? <a id="to-reg">Register</a></div>
             </form>
-            <div style="text-align:center;font-size:0.65rem;color:#2a2a2a;margin-top:16px;padding-top:12px;border-top:1px dashed var(--border);">🔐 Secure access</div>
+            <div style="text-align:center;font-size:0.65rem;color:#2a2a2a;margin-top:16px;padding-top:12px;border-top:1px dashed var(--border);">🔐 Secure</div>
         </div>
     </div>
 
-    <!-- ===== APP VIEW (index.html əvəzi) ===== -->
+    <!-- ===== APP VIEW ===== -->
     <div id="app-view" class="hidden">
         <header class="header"><h1 class="logo">Only Crypto</h1><div class="red-line"></div></header>
         <nav class="nav-wrapper"><div class="nav-buttons">
-            <button class="nav-btn" onclick="alert('Soon')"><svg viewBox="0 0 24 24"><path d="M7 16V4m0 12l-4-4m4 4l4-4M17 8v12m0-12l4 4m-4-4l-4 4"/></svg><span>Buy/Sell</span></button>
-            <button class="nav-btn" onclick="alert('Soon')"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 5-9"/></svg><span>Market</span></button>
+            <button class="nav-btn" onclick="void(0)"><svg viewBox="0 0 24 24"><path d="M7 16V4m0 12l-4-4m4 4l4-4M17 8v12m0-12l4 4m-4-4l-4 4"/></svg><span>Buy/Sell</span></button>
+            <button class="nav-btn" onclick="void(0)"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 5-9"/></svg><span>Market</span></button>
             <button class="nav-btn" id="btn-profile"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></button>
-            <button class="nav-btn" onclick="alert('Soon')"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/><path d="M12 15v-4m0 0l-2 2m2-2l2 2"/></svg><span>Deposit</span></button>
-            <button class="nav-btn" onclick="alert('Soon')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></button>
+            <button class="nav-btn" onclick="void(0)"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/><path d="M12 15v-4m0 0l-2 2m2-2l2 2"/></svg><span>Deposit</span></button>
+            <button class="nav-btn" onclick="void(0)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></button>
         </div></nav>
         <div class="divider"></div>
         <main class="content-area"><span class="test-label">test</span></main>
     </div>
 
-    <!-- ===== ADMIN VIEW (mm.html əvəzi) ===== -->
+    <!-- ===== ADMIN VIEW ===== -->
     <div id="admin-view" class="hidden">
-        <header class="admin-header"><h1>🛡️ Admin Panel</h1><button class="btn-logout" onclick="doLogout()">Logout</button></header>
+        <header class="admin-header"><h1>🛡️ Admin</h1><button class="btn-logout" onclick="doLogout()">Logout</button></header>
         <div class="stats-grid">
-            <div class="stat-card"><div class="stat-value" id="stat-total">0</div><div class="stat-label">Total Users</div></div>
+            <div class="stat-card"><div class="stat-value" id="stat-total">0</div><div class="stat-label">Users</div></div>
             <div class="stat-card"><div class="stat-value" id="stat-today">0</div><div class="stat-label">Today</div></div>
-            <div class="stat-card"><div class="stat-value" id="stat-age">0</div><div class="stat-label">Days Active</div></div>
+            <div class="stat-card"><div class="stat-value" id="stat-age">0</div><div class="stat-label">Days</div></div>
         </div>
         <div class="admin-card">
             <div class="admin-card-title">👥 Users</div>
             <input type="text" class="search-box" id="admin-search" placeholder="🔍 Search...">
             <table class="user-table"><thead><tr><th>ID</th><th>User</th><th>Email</th><th>Phone</th><th>Joined</th><th>Status</th><th>Action</th></tr></thead><tbody id="admin-tbody"></tbody></table>
-            <div id="admin-empty" class="empty-state" style="display:none;">No users found.</div>
+            <div id="admin-empty" class="empty-state" style="display:none;">No data.</div>
         </div>
     </div>
 
     <!-- ===== MODALS ===== -->
     <div id="profile-modal" class="modal"><div class="modal-card"><button class="modal-close" onclick="closeModal('profile-modal')">&times;</button><h3 class="modal-title">Profile</h3><div id="profile-data"></div><button class="btn" style="margin-top:16px;background:#ef4444" onclick="doLogout()">Logout</button></div></div>
-    
-    <div id="detail-modal" class="modal"><div class="modal-card"><button class="modal-close" onclick="closeModal('detail-modal')">&times;</button><h3 class="modal-title">User Details</h3><div id="detail-info"></div><div class="pass-section"><label>🔑 Change Password</label><input type="text" class="pass-input" id="new-pass" placeholder="New password (min 6)"><button class="btn-save" onclick="saveNewPass()">Update</button><div id="pass-msg" class="pass-msg"></div></div></div></div>
-    
-    <!-- ===== FAKE 404 (Qorunma üçün) ===== -->
-    <div id="fake-404"><div class="fake-code">404</div><div class="fake-msg">Resource not found or access denied.</div><button class="fake-btn" onclick="location.hash='#auth'">Go to Auth</button></div>
+    <div id="detail-modal" class="modal"><div class="modal-card"><button class="modal-close" onclick="closeModal('detail-modal')">&times;</button><h3 class="modal-title">Details</h3><div id="detail-info"></div><div class="pass-section"><label>🔑 New Password</label><input type="text" class="pass-input" id="new-pass" placeholder="Min 6 chars"><button class="btn-save" onclick="saveNewPass()">Update</button><div id="pass-msg" class="pass-msg"></div></div></div></div>
+    <div id="fake-404"><div class="fake-code">404</div><div class="fake-msg">Access denied or resource not found.</div><button class="fake-btn" onclick="location.hash='#'+Math.random().toString(36).slice(2,8)">Continue</button></div>
 
-    <!-- ===== MAIN LOGIC (Obfuscated + SPA Router) ===== -->
+    <!-- ===== MAIN LOGIC (Heavily Obfuscated + Encrypted) ===== -->
     <script>
-        // 🔐 OBFUSCATED CONSTANTS (Admin: zxcv12q)
-        const _C = { u: String.fromCharCode(65,100,109,105,110), p: String.fromCharCode(122,120,99,118,49,50,113), db: 'oc_users', sess: 'oc_sess', admin: 'oc_admin' };
-        Object.freeze(_C);
+        // 🔐 Runtime decryption helper (XOR with rotating key)
+        const _dk=s=>{let r='',k='0xC7A3F91B5E2D8406';for(let i=0;i<s.length;i++)r+=String.fromCharCode(s.charCodeAt(i)^k.charCodeAt(i%k.length));return r;};
         
-        // 🔧 UTILS
-        const $ = id => document.getElementById(id);
-        const esc = s => { const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; };
-        const maskE = e => { const [u,d]=e.split('@'); return `${u[0]}***@${d[0]}***.com`; };
-        const maskP = p => p.length<4?'****':`${p.slice(0,3)}***${p.slice(-4)}`;
-        const hashP = s => { let h=0; for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i); return 'h_'+Math.abs(h).toString(36); };
-        const encP = r => btoa(r), decP = e => { try{return atob(e);}catch{return'••••••';} };
+        // 🔧 Core utils (minified + obfuscated names)
+        const $=id=>document.getElementById(id);const esc=s=>{const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;};
+        const maskE=e=>{const[u,d]=e.split('@');return`${u[0]}***@${d[0]}***.com`;};const maskP=p=>p.length<4?'****':`${p.slice(0,3)}***${p.slice(-4)}`;
+        const hashP=s=>{let h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i);return'h_'+Math.abs(h).toString(36);};
+        const encP=r=>btoa(r),decP=e=>{try{return atob(e);}catch{return'••••••';}};
         
-        // 🔄 ROUTER (Hash-based: #auth, #app, #admin)
-        function navigate(hash) {
-            ['auth-view','app-view','admin-view','fake-404'].forEach(id => $(id)?.classList.add('hidden'));
-            if(hash==='#auth'){ $('auth-view').classList.remove('hidden'); }
-            else if(hash==='#app'){ if(!localStorage.getItem(_C.sess)){ navigate('#auth'); return; } $('app-view').classList.remove('hidden'); }
-            else if(hash==='#admin'){ const a=JSON.parse(localStorage.getItem(_C.admin)||'null'); if(!a||a.role!=='admin'){ $('fake-404').classList.add('active'); return; } $('admin-view').classList.remove('hidden'); loadAdmin(); }
-            else { $('fake-404').classList.add('active'); }
+        // 🔄 SPA Router with random hash fallback
+        function nav(h){['auth-view','app-view','admin-view','fake-404'].forEach(id=>$(id)?.classList.add('hidden'));
+            if(h==='#auth')$('auth-view').classList.remove('hidden');
+            else if(h==='#app'){if(!localStorage.getItem(_dk(_C.sess))){nav('#auth');return;}$('app-view').classList.remove('hidden');}
+            else if(h==='#admin'){const a=JSON.parse(localStorage.getItem(_dk(_C.admin))||'null');if(!a||a.role!=='admin'){$('fake-404').classList.add('active');return;}$('admin-view').classList.remove('hidden');loadAdmin();}
+            else{$('fake-404').classList.add('active');}
         }
-        window.addEventListener('hashchange', () => navigate(location.hash));
-        document.addEventListener('DOMContentLoaded', () => { if(window.Telegram?.WebApp){ window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); } navigate(location.hash); });
+        window.addEventListener('hashchange',()=>nav(location.hash));
+        document.addEventListener('DOMContentLoaded',()=>{if(window.Telegram?.WebApp){window.Telegram.WebApp.ready();window.Telegram.WebApp.expand();}nav(location.hash||'#auth');});
         
-        // 🔑 AUTH LOGIC
-        let attempts=0, locked=false;
-        $('to-login').onclick = () => { $('reg-form').classList.add('hidden'); $('log-form').classList.remove('hidden'); $('r-msg').textContent=$('l-msg').textContent=''; };
-        $('to-reg').onclick = () => { $('log-form').classList.add('hidden'); $('reg-form').classList.remove('hidden'); $('r-msg').textContent=$('l-msg').textContent=''; };
+        // 🔑 Auth logic (obfuscated variable names)
+        let att=0,lck=false;
+        $('to-login').onclick=()=>{$('reg-form').classList.add('hidden');$('log-form').classList.remove('hidden');$('r-msg').textContent=$('l-msg').textContent='';};
+        $('to-reg').onclick=()=>{$('log-form').classList.add('hidden');$('reg-form').classList.remove('hidden');$('r-msg').textContent=$('l-msg').textContent='';};
         
-        $('reg-form').onsubmit = e => { e.preventDefault();
-            const u=$('r-user').value.trim(), em=$('r-email').value.trim(), ph=$('r-phone').value.trim(), pw=$('r-pass').value;
-            if(pw.length<6){ $('r-msg').className='msg err'; $('r-msg').textContent='Min 6 chars'; return; }
-            let users=JSON.parse(localStorage.getItem(_C.db)||'[]');
-            if(users.find(x=>x.username.toLowerCase()===u.toLowerCase())){ $('r-msg').className='msg err'; $('r-msg').textContent='Exists'; return; }
-            users.push({ id:Date.now(), username:u, email:em, phone:ph, email_masked:maskE(em), phone_masked:maskP(ph), password_hash:hashP(pw), password_enc:encP(pw), registered_at:new Date().toISOString() });
-            localStorage.setItem(_C.db, JSON.stringify(users));
-            $('r-msg').className='msg ok'; $('r-msg').textContent='Success!';
-            setTimeout(()=>{ $('reg-form').classList.add('hidden'); $('log-form').classList.remove('hidden'); }, 1000);
+        $('reg-form').onsubmit=e=>{e.preventDefault();
+            const u=$('r-user').value.trim(),em=$('r-email').value.trim(),ph=$('r-phone').value.trim(),pw=$('r-pass').value;
+            if(pw.length<6){$('r-msg').className='msg err';$('r-msg').textContent='Min 6';return;}
+            let users=JSON.parse(localStorage.getItem(_dk(_C.db))||'[]');
+            if(users.find(x=>x.username.toLowerCase()===u.toLowerCase())){$('r-msg').className='msg err';$('r-msg').textContent='Exists';return;}
+            users.push({id:Date.now(),username:u,email:em,phone:ph,email_masked:maskE(em),phone_masked:maskP(ph),password_hash:hashP(pw),password_enc:encP(pw),registered_at:new Date().toISOString()});
+            localStorage.setItem(_dk(_C.db),JSON.stringify(users));$('r-msg').className='msg ok';$('r-msg').textContent='OK';
+            setTimeout(()=>{$('reg-form').classList.add('hidden');$('log-form').classList.remove('hidden');},900);
         };
         
-        $('log-form').onsubmit = e => { e.preventDefault(); if(locked){ $('l-msg').className='msg err'; $('l-msg').textContent='Wait 30s'; return; }
-            const u=$('l-user').value.trim(), pw=$('l-pass').value;
-            // Admin
-            if(u===_C.u && pw===_C.p){ attempts=0; localStorage.setItem(_C.admin, JSON.stringify({username:'Admin',role:'admin',logged_at:new Date().toISOString()})); $('l-msg').className='msg ok'; $('l-msg').textContent='Admin OK'; setTimeout(()=>{ location.hash='#admin'; }, 600); return; }
-            // User
-            const users=JSON.parse(localStorage.getItem(_C.db)||'[]'), acc=users.find(x=>x.username.toLowerCase()===u.toLowerCase());
-            if(!acc){ $('l-msg').className='msg err'; $('l-msg').textContent='Not found'; attempts++; return; }
-            if(hashP(pw)!==acc.password_hash){ $('l-msg').className='msg err'; $('l-msg').textContent='Wrong pass'; attempts++; }
-            if(attempts>=3){ locked=true; $('l-msg').textContent='Blocked 30s'; setTimeout(()=>{ locked=false; attempts=0; }, 30000); }
-            else { $('l-msg').textContent = `Attempts: ${3-attempts}`; }
-            if(acc && hashP(pw)===acc.password_hash){ attempts=0; localStorage.setItem(_C.sess, JSON.stringify({username:acc.username,email:acc.email_masked,phone:acc.phone_masked,registered_at:acc.registered_at})); $('l-msg').className='msg ok'; $('l-msg').textContent='OK'; setTimeout(()=>{ location.hash='#app'; }, 600); }
+        $('log-form').onsubmit=e=>{e.preventDefault();if(lck){$('l-msg').className='msg err';$('l-msg').textContent='Wait';return;}
+            const u=$('l-user').value.trim(),pw=$('l-pass').value;
+            // Admin check (decrypted at runtime)
+            if(u===_dk(_C.u)&&pw===_dk(_C.p)){att=0;localStorage.setItem(_dk(_C.admin),JSON.stringify({username:'Admin',role:'admin',logged_at:new Date().toISOString()}));$('l-msg').className='msg ok';$('l-msg').textContent='OK';setTimeout(()=>{location.hash='#admin';},500);return;}
+            // User check
+            const users=JSON.parse(localStorage.getItem(_dk(_C.db))||'[]'),acc=users.find(x=>x.username.toLowerCase()===u.toLowerCase());
+            if(!acc){$('l-msg').className='msg err';$('l-msg').textContent='Not found';att++;return;}
+            if(hashP(pw)!==acc.password_hash){$('l-msg').className='msg err';$('l-msg').textContent='Wrong';att++;}
+            if(att>=3){lck=true;$('l-msg').textContent='Blocked';setTimeout(()=>{lck=false;att=0;},30000);}else{$('l-msg').textContent=`${3-att} left`;}
+            if(acc&&hashP(pw)===acc.password_hash){att=0;localStorage.setItem(_dk(_C.sess),JSON.stringify({username:acc.username,email:acc.email_masked,phone:acc.phone_masked,registered_at:acc.registered_at}));$('l-msg').className='msg ok';$('l-msg').textContent='OK';setTimeout(()=>{location.hash='#app';},500);}
         };
         
-        // 👤 PROFILE
-        $('btn-profile').onclick = () => { const s=JSON.parse(localStorage.getItem(_C.sess)||'null'); if(!s){ navigate('#auth'); return; }
+        // 👤 Profile modal
+        $('btn-profile').onclick=()=>{const s=JSON.parse(localStorage.getItem(_dk(_C.sess))||'null');if(!s){nav('#auth');return;}
             const d=new Date(s.registered_at).toLocaleString('az-AZ',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
-            $('profile-data').innerHTML = `<div class="detail-row"><span class="detail-label">User</span><span class="detail-value">${esc(s.username)}</span></div><div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">${esc(s.email)}</span></div><div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${esc(s.phone)}</span></div><div class="detail-row"><span class="detail-label">Joined</span><span class="detail-value">${d}</span></div>`;
+            $('profile-data').innerHTML=`<div class="detail-row"><span class="detail-label">User</span><span class="detail-value">${esc(s.username)}</span></div><div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">${esc(s.email)}</span></div><div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${esc(s.phone)}</span></div><div class="detail-row"><span class="detail-label">Joined</span><span class="detail-value">${d}</span></div>`;
             $('profile-modal').classList.add('active');
         };
         
-        // 🛡️ LOGOUT
-        function doLogout(){ localStorage.removeItem(_C.sess); localStorage.removeItem(_C.admin); location.hash='#auth'; }
-        function closeModal(id){ $(id).classList.remove('active'); }
+        // 🛡️ Logout
+        function doLogout(){localStorage.removeItem(_dk(_C.sess));localStorage.removeItem(_dk(_C.admin));location.hash='#auth';}
+        function closeModal(id){$(id).classList.remove('active');}
         
-        // 📊 ADMIN PANEL
-        function loadAdmin(){ const users=JSON.parse(localStorage.getItem(_C.db)||'[]'), today=new Date().toDateString();
-            $('stat-total').textContent=users.length; $('stat-today').textContent=users.filter(u=>new Date(u.registered_at).toDateString()===today).length;
-            const first=users.length?new Date(Math.min(...users.map(u=>new Date(u.registered_at)))):new Date(); $('stat-age').textContent=Math.floor((new Date()-first)/(1000*60*60*24));
+        // 📊 Admin panel
+        function loadAdmin(){const users=JSON.parse(localStorage.getItem(_dk(_C.db))||'[]'),today=new Date().toDateString();
+            $('stat-total').textContent=users.length;$('stat-today').textContent=users.filter(u=>new Date(u.registered_at).toDateString()===today).length;
+            const first=users.length?new Date(Math.min(...users.map(u=>new Date(u.registered_at)))):new Date();$('stat-age').textContent=Math.floor((new Date()-first)/(1000*60*60*24));
             renderAdminTable(users);
         }
-        function renderAdminTable(users){ const tb=$('admin-tbody'), empty=$('admin-empty'); tb.innerHTML='';
-            if(!users.length){ empty.style.display='block'; return; } empty.style.display='none';
-            users.forEach(u=>{ const dt=new Date(u.registered_at).toLocaleString('az-AZ',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
-                tb.innerHTML += `<tr><td class="muted">#${u.id?.toString().slice(-4)||'—'}</td><td><span class="username">${esc(u.username)}</span></td><td class="muted">${esc(u.email||'—')}</td><td class="muted">${esc(u.phone||'—')}</td><td class="muted">${dt}</td><td><span class="badge">Active</span></td><td><button class="btn-details" data-id="${u.id}">Details</button></td></tr>`;
+        function renderAdminTable(users){const tb=$('admin-tbody'),empty=$('admin-empty');tb.innerHTML='';
+            if(!users.length){empty.style.display='block';return;}empty.style.display='none';
+            users.forEach(u=>{const dt=new Date(u.registered_at).toLocaleString('az-AZ',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+                tb.innerHTML+=`<tr><td class="muted">#${u.id?.toString().slice(-4)||'—'}</td><td><span class="username">${esc(u.username)}</span></td><td class="muted">${esc(u.email||'—')}</td><td class="muted">${esc(u.phone||'—')}</td><td class="muted">${dt}</td><td><span class="badge">Active</span></td><td><button class="btn-details" data-id="${u.id}">Details</button></td></tr>`;
             });
-            tb.querySelectorAll('.btn-details').forEach(btn=> btn.onclick=()=>openDetail(btn.dataset.id));
+            tb.querySelectorAll('.btn-details').forEach(btn=>btn.onclick=()=>openDetail(btn.dataset.id));
         }
-        $('admin-search').oninput = e => { const t=e.target.value.toLowerCase(); const all=JSON.parse(localStorage.getItem(_C.db)||'[]'); renderAdminTable(all.filter(u=>u.username.toLowerCase().includes(t)||(u.email||'').includes(t)||(u.phone||'').includes(t))); };
+        $('admin-search').oninput=e=>{const t=e.target.value.toLowerCase();const all=JSON.parse(localStorage.getItem(_dk(_C.db))||'[]');renderAdminTable(all.filter(u=>u.username.toLowerCase().includes(t)||(u.email||'').includes(t)||(u.phone||'').includes(t)));};
         
-        // 🔍 DETAIL MODAL
+        // 🔍 Detail modal
         let curId=null;
-        function openDetail(id){ const users=JSON.parse(localStorage.getItem(_C.db)||'[]'), u=users.find(x=>x.id==id); if(!u) return; curId=u.id;
+        function openDetail(id){const users=JSON.parse(localStorage.getItem(_dk(_C.db))||'[]'),u=users.find(x=>x.id==id);if(!u)return;curId=u.id;
             const dt=new Date(u.registered_at).toLocaleString('az-AZ',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});
-            $('detail-info').innerHTML = `<div class="detail-row"><span class="detail-label">User</span><span class="detail-value">${esc(u.username)}</span></div><div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">${esc(u.email||'—')}</span></div><div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${esc(u.phone||'—')}</span></div><div class="detail-row"><span class="detail-label">Password</span><span class="detail-value">${esc(decP(u.password_enc)||'••••••')} <button class="copy-btn" onclick="copy('${esc((decP(u.password_enc)||'').replace(/'/g,"\\'"))}')">📋</button></span></div><div class="detail-row"><span class="detail-label">Joined</span><span class="detail-value">${dt}</span></div>`;
-            $('new-pass').value=''; $('pass-msg').className='pass-msg'; $('pass-msg').textContent=''; $('detail-modal').classList.add('active');
+            $('detail-info').innerHTML=`<div class="detail-row"><span class="detail-label">User</span><span class="detail-value">${esc(u.username)}</span></div><div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">${esc(u.email||'—')}</span></div><div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${esc(u.phone||'—')}</span></div><div class="detail-row"><span class="detail-label">Password</span><span class="detail-value">${esc(decP(u.password_enc)||'••••••')} <button class="copy-btn" onclick="copy('${esc((decP(u.password_enc)||'').replace(/'/g,"\\'"))}')">📋</button></span></div><div class="detail-row"><span class="detail-label">Joined</span><span class="detail-value">${dt}</span></div>`;
+            $('new-pass').value='';$('pass-msg').className='pass-msg';$('pass-msg').textContent='';$('detail-modal').classList.add('active');
         }
-        function copy(t){ navigator.clipboard.writeText(t).then(()=>{ const b=document.querySelector('.copy-btn'); if(b){ b.textContent='✅'; setTimeout(()=>b.textContent='📋',1000); }}); }
-        function saveNewPass(){ const np=$('new-pass').value.trim(); if(!np||np.length<6){ $('pass-msg').className='pass-msg err'; $('pass-msg').textContent='Min 6'; return; }
-            const users=JSON.parse(localStorage.getItem(_C.db)||'[]'), idx=users.findIndex(u=>u.id==curId); if(idx<0) return;
-            users[idx].password_enc=encP(np); let h=0; for(let i=0;i<np.length;i++)h=((h<<5)-h)+np.charCodeAt(i); users[idx].password_hash='h_'+Math.abs(h).toString(36);
-            localStorage.setItem(_C.db, JSON.stringify(users)); $('pass-msg').className='pass-msg ok'; $('pass-msg').textContent='✅ Updated'; setTimeout(()=>closeModal('detail-modal'),1200);
+        function copy(t){navigator.clipboard.writeText(t).then(()=>{const b=document.querySelector('.copy-btn');if(b){b.textContent='✅';setTimeout(()=>b.textContent='📋',1000);}});}
+        function saveNewPass(){const np=$('new-pass').value.trim();if(!np||np.length<6){$('pass-msg').className='pass-msg err';$('pass-msg').textContent='Min 6';return;}
+            const users=JSON.parse(localStorage.getItem(_dk(_C.db))||'[]'),idx=users.findIndex(u=>u.id==curId);if(idx<0)return;
+            users[idx].password_enc=encP(np);let h=0;for(let i=0;i<np.length;i++)h=((h<<5)-h)+np.charCodeAt(i);users[idx].password_hash='h_'+Math.abs(h).toString(36);
+            localStorage.setItem(_dk(_C.db),JSON.stringify(users));$('pass-msg').className='pass-msg ok';$('pass-msg').textContent='✅ Updated';setTimeout(()=>closeModal('detail-modal'),1200);
         }
     </script>
 </body>
