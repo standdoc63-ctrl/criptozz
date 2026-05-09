@@ -59,95 +59,8 @@
         .fake-btn{padding:12px 28px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-weight:600;cursor:pointer;text-decoration:none}
         @media(max-width:600px){.user-table{display:block;overflow-x:auto}.admin-header{flex-direction:column;gap:12px;text-align:center}}
     </style>
-    <script>
-        // ⚡ Instant hash routing check
-        (function(){if(!location.hash||location.hash==='#'){location.replace('#'+(Math.random().toString(36).substring(2,8)));}})();
-    </script>
 </head>
 <body>
-    <!-- 🛡️ MULTI-LAYER ANTI-DEBUG + ENCRYPTION + OBFUSCATION -->
-    <script>
-        (function(){
-            // Layer 1: Console spoofing with fake logs
-            const fakeLogs=['[CDN] asset loaded: /static/js/chunk-7f3a2b.min.js','[WS] heartbeat: ok','[Cache] hit: /api/v1/config','[Auth] token refresh: silent','[Analytics] event: page_view'];
-            ['log','info','warn','debug','trace'].forEach(m=>{const orig=console[m];console[m]=function(){if(orig&&Math.random()>0.3)orig.apply(console,[fakeLogs[Math.floor(Math.random()*fakeLogs.length)]]);};});
-            console.error=console.warn; setInterval(()=>console.clear&&console.clear(),2500);
-            
-            // Layer 2: DevTools detection via multiple methods
-            const detectDevTools=()=>{
-                const threshold=160;
-                const sizeDiffW=window.outerWidth-window.innerWidth>threshold;
-                const sizeDiffH=window.outerHeight-window.innerHeight>threshold;
-                const debuggerCheck=()=>{debugger;return new Date().getTime()>100;}; // Will pause if DevTools open
-                return sizeDiffW||sizeDiffH||debuggerCheck();
-            };
-            let blockCount=0;
-            setInterval(()=>{
-                if(detectDevTools()){
-                    blockCount++;
-                    if(blockCount>=2){
-                        document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#ef4444;font-size:1.5rem;background:#0a0a0a;">🚫 Security Block</div>';
-                        document.title='Blocked';
-                        history.replaceState(null,'','/blocked');
-                    }
-                }
-            },700);
-            
-            // Layer 3: Block all dev shortcuts & context menu
-            document.addEventListener('contextmenu',e=>e.preventDefault(),{capture:true});
-            document.addEventListener('keydown',e=>{
-                const k=e.key.toUpperCase();
-                if(k==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C','K'].includes(k))||(e.ctrlKey&&k==='U')||(e.metaKey&&k==='OPTION')){
-                    e.preventDefault();e.stopPropagation();return false;
-                }
-            },true);
-            
-            // Layer 4: Fake network noise (intercept fetch/XHR)
-            if(window.fetch){
-                const origFetch=window.fetch;
-                window.fetch=function(...args){
-                    // Add random fake requests to noise
-                    if(Math.random()>0.65){
-                        const fakeUrl=`/api/v${Math.floor(Math.random()*4)}/sync?r=${Math.random().toString(36).slice(2)}&t=${Date.now()}`;
-                        console.log(`[NET] GET ${fakeUrl} [cached]`);
-                    }
-                    return origFetch.apply(this,args);
-                };
-            }
-            if(window.XMLHttpRequest){
-                const origXHR=window.XMLHttpRequest;
-                window.XMLHttpRequest=function(){
-                    const xhr=new origXHR();
-                    const origOpen=xhr.open;
-                    xhr.open=function(method,url,...rest){
-                        if(Math.random()>0.7)console.log(`[XHR] ${method} ${url} [mocked]`);
-                        return origOpen.apply(xhr,[method,url,...rest]);
-                    };
-                    return xhr;
-                };
-            }
-            
-            // Layer 5: Runtime string encryption helper (simple XOR)
-            const _k='0xC7A3F91B5E2D8406'; // Obfuscated key
-            const _d=s=>{let r='';for(let i=0;i<s.length;i++)r+=String.fromCharCode(s.charCodeAt(i)^_k.charCodeAt(i%_k.length));return r;};
-            
-            // Expose encrypted constants (will be decrypted at runtime)
-            window._C={
-                u:_d('QnZwY2Jc'), // "Admin" XOR encrypted
-                p:_d('Wl5dY1xmMnF8'), // "zxcv12q" XOR encrypted
-                db:_d('b2NfdXNlcnM='), // "oc_users"
-                sess:_d('b2Nfc2Vzcw=='), // "oc_sess"
-                admin:_d('b2NfYWRtaW4=') // "oc_admin"
-            };
-            Object.freeze(window._C);
-            
-            // Layer 6: Self-destruct on tampering
-            let integrityCheck=setInterval(()=>{
-                if(document.querySelector('script[data-tamper]')){clearInterval(integrityCheck);document.body.innerHTML='🔒';}
-            },5000);
-        })();
-    </script>
-
     <!-- ===== AUTH VIEW ===== -->
     <div id="auth-view">
         <div class="card">
@@ -179,7 +92,7 @@
             <button class="nav-btn" onclick="void(0)"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 5-9"/></svg><span>Market</span></button>
             <button class="nav-btn" id="btn-profile"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></button>
             <button class="nav-btn" onclick="void(0)"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/><path d="M12 15v-4m0 0l-2 2m2-2l2 2"/></svg><span>Deposit</span></button>
-            <button class="nav-btn" onclick="void(0)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></button>
+            <button class="nav-btn" onclick="void(0)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></button>
         </div></nav>
         <div class="divider"></div>
         <main class="content-area"><span class="test-label">test</span></main>
@@ -187,7 +100,7 @@
 
     <!-- ===== ADMIN VIEW ===== -->
     <div id="admin-view" class="hidden">
-        <header class="admin-header"><h1>🛡️ Admin</h1><button class="btn-logout" onclick="doLogout()">Logout</button></header>
+        <header class="admin-header"><h1>🛡️ Admin Panel</h1><button class="btn-logout" onclick="doLogout()">Logout</button></header>
         <div class="stats-grid">
             <div class="stat-card"><div class="stat-value" id="stat-total">0</div><div class="stat-label">Users</div></div>
             <div class="stat-card"><div class="stat-value" id="stat-today">0</div><div class="stat-label">Today</div></div>
@@ -203,96 +116,119 @@
 
     <!-- ===== MODALS ===== -->
     <div id="profile-modal" class="modal"><div class="modal-card"><button class="modal-close" onclick="closeModal('profile-modal')">&times;</button><h3 class="modal-title">Profile</h3><div id="profile-data"></div><button class="btn" style="margin-top:16px;background:#ef4444" onclick="doLogout()">Logout</button></div></div>
-    <div id="detail-modal" class="modal"><div class="modal-card"><button class="modal-close" onclick="closeModal('detail-modal')">&times;</button><h3 class="modal-title">Details</h3><div id="detail-info"></div><div class="pass-section"><label>🔑 New Password</label><input type="text" class="pass-input" id="new-pass" placeholder="Min 6 chars"><button class="btn-save" onclick="saveNewPass()">Update</button><div id="pass-msg" class="pass-msg"></div></div></div></div>
-    <div id="fake-404"><div class="fake-code">404</div><div class="fake-msg">Access denied or resource not found.</div><button class="fake-btn" onclick="location.hash='#'+Math.random().toString(36).slice(2,8)">Continue</button></div>
+    <div id="detail-modal" class="modal"><div class="modal-card"><button class="modal-close" onclick="closeModal('detail-modal')">&times;</button><h3 class="modal-title">User Details</h3><div id="detail-info"></div><div class="pass-section"><label>🔑 New Password</label><input type="text" class="pass-input" id="new-pass" placeholder="Min 6 chars"><button class="btn-save" onclick="saveNewPass()">Update</button><div id="pass-msg" class="pass-msg"></div></div></div></div>
+    <div id="fake-404"><div class="fake-code">404</div><div class="fake-msg">Access denied.</div><button class="fake-btn" onclick="location.hash='#auth'">Go to Login</button></div>
 
-    <!-- ===== MAIN LOGIC (Heavily Obfuscated + Encrypted) ===== -->
+    <!-- ===== MAIN LOGIC ===== -->
     <script>
-        // 🔐 Runtime decryption helper (XOR with rotating key)
-        const _dk=s=>{let r='',k='0xC7A3F91B5E2D8406';for(let i=0;i<s.length;i++)r+=String.fromCharCode(s.charCodeAt(i)^k.charCodeAt(i%k.length));return r;};
+        // 🔐 Obfuscated constants (Admin: zxcv12q)
+        const _C = {
+            u: String.fromCharCode(65,100,109,105,110),           // "Admin"
+            p: String.fromCharCode(122,120,99,118,49,50,113),     // "zxcv12q"
+            db: 'oc_users', sess: 'oc_sess', admin: 'oc_admin'
+        };
+        Object.freeze(_C);
         
-        // 🔧 Core utils (minified + obfuscated names)
-        const $=id=>document.getElementById(id);const esc=s=>{const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;};
-        const maskE=e=>{const[u,d]=e.split('@');return`${u[0]}***@${d[0]}***.com`;};const maskP=p=>p.length<4?'****':`${p.slice(0,3)}***${p.slice(-4)}`;
-        const hashP=s=>{let h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i);return'h_'+Math.abs(h).toString(36);};
-        const encP=r=>btoa(r),decP=e=>{try{return atob(e);}catch{return'••••••';}};
+        // 🔧 Utils
+        const $ = id => document.getElementById(id);
+        const esc = s => { const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; };
+        const maskE = e => { const [u,d]=e.split('@'); return `${u[0]}***@${d[0]}***.com`; };
+        const maskP = p => p.length<4?'****':`${p.slice(0,3)}***${p.slice(-4)}`;
+        const hashP = s => { let h=0; for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i); return 'h_'+Math.abs(h).toString(36); };
+        const encP = r => btoa(r), decP = e => { try{return atob(e);}catch{return'••••••';} };
         
-        // 🔄 SPA Router with random hash fallback
-        function nav(h){['auth-view','app-view','admin-view','fake-404'].forEach(id=>$(id)?.classList.add('hidden'));
-            if(h==='#auth')$('auth-view').classList.remove('hidden');
-            else if(h==='#app'){if(!localStorage.getItem(_dk(_C.sess))){nav('#auth');return;}$('app-view').classList.remove('hidden');}
-            else if(h==='#admin'){const a=JSON.parse(localStorage.getItem(_dk(_C.admin))||'null');if(!a||a.role!=='admin'){$('fake-404').classList.add('active');return;}$('admin-view').classList.remove('hidden');loadAdmin();}
-            else{$('fake-404').classList.add('active');}
+        // 🔄 SPA Router
+        function nav(h){
+            ['auth-view','app-view','admin-view','fake-404'].forEach(id=>$(id)?.classList.add('hidden'));
+            if(h==='#auth') $('auth-view').classList.remove('hidden');
+            else if(h==='#app'){ if(!localStorage.getItem(_C.sess)){ nav('#auth'); return; } $('app-view').classList.remove('hidden'); }
+            else if(h==='#admin'){ const a=JSON.parse(localStorage.getItem(_C.admin)||'null'); if(!a||a.role!=='admin'){$('fake-404').classList.add('active');return;} $('admin-view').classList.remove('hidden'); loadAdmin(); }
+            else { $('fake-404').classList.add('active'); }
         }
-        window.addEventListener('hashchange',()=>nav(location.hash));
-        document.addEventListener('DOMContentLoaded',()=>{if(window.Telegram?.WebApp){window.Telegram.WebApp.ready();window.Telegram.WebApp.expand();}nav(location.hash||'#auth');});
+        window.addEventListener('hashchange', ()=>nav(location.hash));
         
-        // 🔑 Auth logic (obfuscated variable names)
-        let att=0,lck=false;
-        $('to-login').onclick=()=>{$('reg-form').classList.add('hidden');$('log-form').classList.remove('hidden');$('r-msg').textContent=$('l-msg').textContent='';};
-        $('to-reg').onclick=()=>{$('log-form').classList.add('hidden');$('reg-form').classList.remove('hidden');$('r-msg').textContent=$('l-msg').textContent='';};
+        // 🚀 Init
+        document.addEventListener('DOMContentLoaded', ()=>{
+            if(window.Telegram?.WebApp){ window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); }
+            if(!location.hash) location.replace('#auth');
+            else nav(location.hash);
+        });
         
-        $('reg-form').onsubmit=e=>{e.preventDefault();
-            const u=$('r-user').value.trim(),em=$('r-email').value.trim(),ph=$('r-phone').value.trim(),pw=$('r-pass').value;
-            if(pw.length<6){$('r-msg').className='msg err';$('r-msg').textContent='Min 6';return;}
-            let users=JSON.parse(localStorage.getItem(_dk(_C.db))||'[]');
-            if(users.find(x=>x.username.toLowerCase()===u.toLowerCase())){$('r-msg').className='msg err';$('r-msg').textContent='Exists';return;}
-            users.push({id:Date.now(),username:u,email:em,phone:ph,email_masked:maskE(em),phone_masked:maskP(ph),password_hash:hashP(pw),password_enc:encP(pw),registered_at:new Date().toISOString()});
-            localStorage.setItem(_dk(_C.db),JSON.stringify(users));$('r-msg').className='msg ok';$('r-msg').textContent='OK';
-            setTimeout(()=>{$('reg-form').classList.add('hidden');$('log-form').classList.remove('hidden');},900);
+        // 🔑 Auth
+        let att=0, lck=false;
+        $('to-login').onclick=()=>{ $('reg-form').classList.add('hidden'); $('log-form').classList.remove('hidden'); $('r-msg').textContent=$('l-msg').textContent=''; };
+        $('to-reg').onclick=()=>{ $('log-form').classList.add('hidden'); $('reg-form').classList.remove('hidden'); $('r-msg').textContent=$('l-msg').textContent=''; };
+        
+        $('reg-form').onsubmit=e=>{ e.preventDefault();
+            const u=$('r-user').value.trim(), em=$('r-email').value.trim(), ph=$('r-phone').value.trim(), pw=$('r-pass').value;
+            if(pw.length<6){ $('r-msg').className='msg err'; $('r-msg').textContent='Min 6 chars'; return; }
+            let users=JSON.parse(localStorage.getItem(_C.db)||'[]');
+            if(users.find(x=>x.username.toLowerCase()===u.toLowerCase())){ $('r-msg').className='msg err'; $('r-msg').textContent='Exists'; return; }
+            users.push({ id:Date.now(), username:u, email:em, phone:ph, email_masked:maskE(em), phone_masked:maskP(ph), password_hash:hashP(pw), password_enc:encP(pw), registered_at:new Date().toISOString() });
+            localStorage.setItem(_C.db, JSON.stringify(users));
+            $('r-msg').className='msg ok'; $('r-msg').textContent='Success!';
+            setTimeout(()=>{ $('reg-form').classList.add('hidden'); $('log-form').classList.remove('hidden'); }, 900);
         };
         
-        $('log-form').onsubmit=e=>{e.preventDefault();if(lck){$('l-msg').className='msg err';$('l-msg').textContent='Wait';return;}
-            const u=$('l-user').value.trim(),pw=$('l-pass').value;
-            // Admin check (decrypted at runtime)
-            if(u===_dk(_C.u)&&pw===_dk(_C.p)){att=0;localStorage.setItem(_dk(_C.admin),JSON.stringify({username:'Admin',role:'admin',logged_at:new Date().toISOString()}));$('l-msg').className='msg ok';$('l-msg').textContent='OK';setTimeout(()=>{location.hash='#admin';},500);return;}
-            // User check
-            const users=JSON.parse(localStorage.getItem(_dk(_C.db))||'[]'),acc=users.find(x=>x.username.toLowerCase()===u.toLowerCase());
-            if(!acc){$('l-msg').className='msg err';$('l-msg').textContent='Not found';att++;return;}
-            if(hashP(pw)!==acc.password_hash){$('l-msg').className='msg err';$('l-msg').textContent='Wrong';att++;}
-            if(att>=3){lck=true;$('l-msg').textContent='Blocked';setTimeout(()=>{lck=false;att=0;},30000);}else{$('l-msg').textContent=`${3-att} left`;}
-            if(acc&&hashP(pw)===acc.password_hash){att=0;localStorage.setItem(_dk(_C.sess),JSON.stringify({username:acc.username,email:acc.email_masked,phone:acc.phone_masked,registered_at:acc.registered_at}));$('l-msg').className='msg ok';$('l-msg').textContent='OK';setTimeout(()=>{location.hash='#app';},500);}
+        $('log-form').onsubmit=e=>{ e.preventDefault(); if(lck){ $('l-msg').className='msg err'; $('l-msg').textContent='Wait 30s'; return; }
+            const u=$('l-user').value.trim(), pw=$('l-pass').value;
+            // Admin
+            if(u===_C.u && pw===_C.p){ att=0; localStorage.setItem(_C.admin, JSON.stringify({username:'Admin',role:'admin',logged_at:new Date().toISOString()})); $('l-msg').className='msg ok'; $('l-msg').textContent='Admin OK'; setTimeout(()=>{ location.hash='#admin'; }, 500); return; }
+            // User
+            const users=JSON.parse(localStorage.getItem(_C.db)||'[]'), acc=users.find(x=>x.username.toLowerCase()===u.toLowerCase());
+            if(!acc){ $('l-msg').className='msg err'; $('l-msg').textContent='Not found'; att++; return; }
+            if(hashP(pw)!==acc.password_hash){ $('l-msg').className='msg err'; $('l-msg').textContent='Wrong password'; att++; }
+            if(att>=3){ lck=true; $('l-msg').textContent='Blocked 30s'; setTimeout(()=>{ lck=false; att=0; }, 30000); }
+            else { $('l-msg').textContent = `Attempts left: ${3-att}`; }
+            if(acc && hashP(pw)===acc.password_hash){ att=0; localStorage.setItem(_C.sess, JSON.stringify({username:acc.username,email:acc.email_masked,phone:acc.phone_masked,registered_at:acc.registered_at})); $('l-msg').className='msg ok'; $('l-msg').textContent='Login OK'; setTimeout(()=>{ location.hash='#app'; }, 500); }
         };
         
-        // 👤 Profile modal
-        $('btn-profile').onclick=()=>{const s=JSON.parse(localStorage.getItem(_dk(_C.sess))||'null');if(!s){nav('#auth');return;}
+        // 👤 Profile
+        $('btn-profile').onclick=()=>{ const s=JSON.parse(localStorage.getItem(_C.sess)||'null'); if(!s){ nav('#auth'); return; }
             const d=new Date(s.registered_at).toLocaleString('az-AZ',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
-            $('profile-data').innerHTML=`<div class="detail-row"><span class="detail-label">User</span><span class="detail-value">${esc(s.username)}</span></div><div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">${esc(s.email)}</span></div><div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${esc(s.phone)}</span></div><div class="detail-row"><span class="detail-label">Joined</span><span class="detail-value">${d}</span></div>`;
+            $('profile-data').innerHTML = `<div class="detail-row"><span class="detail-label">User</span><span class="detail-value">${esc(s.username)}</span></div><div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">${esc(s.email)}</span></div><div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${esc(s.phone)}</span></div><div class="detail-row"><span class="detail-label">Joined</span><span class="detail-value">${d}</span></div>`;
             $('profile-modal').classList.add('active');
         };
         
         // 🛡️ Logout
-        function doLogout(){localStorage.removeItem(_dk(_C.sess));localStorage.removeItem(_dk(_C.admin));location.hash='#auth';}
-        function closeModal(id){$(id).classList.remove('active');}
+        function doLogout(){ localStorage.removeItem(_C.sess); localStorage.removeItem(_C.admin); location.hash='#auth'; }
+        function closeModal(id){ $(id).classList.remove('active'); }
+        document.querySelectorAll('.modal-close').forEach(btn=> btn.onclick=()=>closeModal(btn.closest('.modal').id));
+        document.querySelectorAll('.modal').forEach(m=> m.onclick=e=>{ if(e.target===m) closeModal(m.id); });
         
-        // 📊 Admin panel
-        function loadAdmin(){const users=JSON.parse(localStorage.getItem(_dk(_C.db))||'[]'),today=new Date().toDateString();
-            $('stat-total').textContent=users.length;$('stat-today').textContent=users.filter(u=>new Date(u.registered_at).toDateString()===today).length;
-            const first=users.length?new Date(Math.min(...users.map(u=>new Date(u.registered_at)))):new Date();$('stat-age').textContent=Math.floor((new Date()-first)/(1000*60*60*24));
+        // 📊 Admin
+        function loadAdmin(){ const users=JSON.parse(localStorage.getItem(_C.db)||'[]'), today=new Date().toDateString();
+            $('stat-total').textContent=users.length; $('stat-today').textContent=users.filter(u=>new Date(u.registered_at).toDateString()===today).length;
+            const first=users.length?new Date(Math.min(...users.map(u=>new Date(u.registered_at)))):new Date(); $('stat-age').textContent=Math.floor((new Date()-first)/(1000*60*60*24));
             renderAdminTable(users);
         }
-        function renderAdminTable(users){const tb=$('admin-tbody'),empty=$('admin-empty');tb.innerHTML='';
-            if(!users.length){empty.style.display='block';return;}empty.style.display='none';
-            users.forEach(u=>{const dt=new Date(u.registered_at).toLocaleString('az-AZ',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
-                tb.innerHTML+=`<tr><td class="muted">#${u.id?.toString().slice(-4)||'—'}</td><td><span class="username">${esc(u.username)}</span></td><td class="muted">${esc(u.email||'—')}</td><td class="muted">${esc(u.phone||'—')}</td><td class="muted">${dt}</td><td><span class="badge">Active</span></td><td><button class="btn-details" data-id="${u.id}">Details</button></td></tr>`;
+        function renderAdminTable(users){ const tb=$('admin-tbody'), empty=$('admin-empty'); tb.innerHTML='';
+            if(!users.length){ empty.style.display='block'; return; } empty.style.display='none';
+            users.forEach(u=>{ const dt=new Date(u.registered_at).toLocaleString('az-AZ',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+                tb.innerHTML += `<tr><td class="muted">#${u.id?.toString().slice(-4)||'—'}</td><td><span class="username">${esc(u.username)}</span></td><td class="muted">${esc(u.email||'—')}</td><td class="muted">${esc(u.phone||'—')}</td><td class="muted">${dt}</td><td><span class="badge">Active</span></td><td><button class="btn-details" data-id="${u.id}">Details</button></td></tr>`;
             });
-            tb.querySelectorAll('.btn-details').forEach(btn=>btn.onclick=()=>openDetail(btn.dataset.id));
+            tb.querySelectorAll('.btn-details').forEach(btn=> btn.onclick=()=>openDetail(btn.dataset.id));
         }
-        $('admin-search').oninput=e=>{const t=e.target.value.toLowerCase();const all=JSON.parse(localStorage.getItem(_dk(_C.db))||'[]');renderAdminTable(all.filter(u=>u.username.toLowerCase().includes(t)||(u.email||'').includes(t)||(u.phone||'').includes(t)));};
+        $('admin-search').oninput=e=>{ const t=e.target.value.toLowerCase(); const all=JSON.parse(localStorage.getItem(_C.db)||'[]'); renderAdminTable(all.filter(u=>u.username.toLowerCase().includes(t)||(u.email||'').includes(t)||(u.phone||'').includes(t))); };
         
-        // 🔍 Detail modal
+        // 🔍 Detail
         let curId=null;
-        function openDetail(id){const users=JSON.parse(localStorage.getItem(_dk(_C.db))||'[]'),u=users.find(x=>x.id==id);if(!u)return;curId=u.id;
+        function openDetail(id){ const users=JSON.parse(localStorage.getItem(_C.db)||'[]'), u=users.find(x=>x.id==id); if(!u) return; curId=u.id;
             const dt=new Date(u.registered_at).toLocaleString('az-AZ',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});
-            $('detail-info').innerHTML=`<div class="detail-row"><span class="detail-label">User</span><span class="detail-value">${esc(u.username)}</span></div><div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">${esc(u.email||'—')}</span></div><div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${esc(u.phone||'—')}</span></div><div class="detail-row"><span class="detail-label">Password</span><span class="detail-value">${esc(decP(u.password_enc)||'••••••')} <button class="copy-btn" onclick="copy('${esc((decP(u.password_enc)||'').replace(/'/g,"\\'"))}')">📋</button></span></div><div class="detail-row"><span class="detail-label">Joined</span><span class="detail-value">${dt}</span></div>`;
-            $('new-pass').value='';$('pass-msg').className='pass-msg';$('pass-msg').textContent='';$('detail-modal').classList.add('active');
+            $('detail-info').innerHTML = `<div class="detail-row"><span class="detail-label">User</span><span class="detail-value">${esc(u.username)}</span></div><div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">${esc(u.email||'—')}</span></div><div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${esc(u.phone||'—')}</span></div><div class="detail-row"><span class="detail-label">Password</span><span class="detail-value">${esc(decP(u.password_enc)||'••••••')} <button class="copy-btn" onclick="copy('${esc((decP(u.password_enc)||'').replace(/'/g,"\\'"))}')">📋</button></span></div><div class="detail-row"><span class="detail-label">Joined</span><span class="detail-value">${dt}</span></div>`;
+            $('new-pass').value=''; $('pass-msg').className='pass-msg'; $('pass-msg').textContent=''; $('detail-modal').classList.add('active');
         }
-        function copy(t){navigator.clipboard.writeText(t).then(()=>{const b=document.querySelector('.copy-btn');if(b){b.textContent='✅';setTimeout(()=>b.textContent='📋',1000);}});}
-        function saveNewPass(){const np=$('new-pass').value.trim();if(!np||np.length<6){$('pass-msg').className='pass-msg err';$('pass-msg').textContent='Min 6';return;}
-            const users=JSON.parse(localStorage.getItem(_dk(_C.db))||'[]'),idx=users.findIndex(u=>u.id==curId);if(idx<0)return;
-            users[idx].password_enc=encP(np);let h=0;for(let i=0;i<np.length;i++)h=((h<<5)-h)+np.charCodeAt(i);users[idx].password_hash='h_'+Math.abs(h).toString(36);
-            localStorage.setItem(_dk(_C.db),JSON.stringify(users));$('pass-msg').className='pass-msg ok';$('pass-msg').textContent='✅ Updated';setTimeout(()=>closeModal('detail-modal'),1200);
+        function copy(t){ navigator.clipboard.writeText(t).then(()=>{ const b=document.querySelector('.copy-btn'); if(b){ b.textContent='✅'; setTimeout(()=>b.textContent='📋',1000); }}); }
+        function saveNewPass(){ const np=$('new-pass').value.trim(); if(!np||np.length<6){ $('pass-msg').className='pass-msg err'; $('pass-msg').textContent='Min 6 chars'; return; }
+            const users=JSON.parse(localStorage.getItem(_C.db)||'[]'), idx=users.findIndex(u=>u.id==curId); if(idx<0) return;
+            users[idx].password_enc=encP(np); let h=0; for(let i=0;i<np.length;i++)h=((h<<5)-h)+np.charCodeAt(i); users[idx].password_hash='h_'+Math.abs(h).toString(36);
+            localStorage.setItem(_C.db, JSON.stringify(users)); $('pass-msg').className='pass-msg ok'; $('pass-msg').textContent='✅ Updated'; setTimeout(()=>closeModal('detail-modal'),1200);
         }
+        
+        // 🛡️ Light protection (doesn't block usage)
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => { if(e.key==='F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase()))) e.preventDefault(); });
+        console.log = () => {}; // Disable console output
     </script>
 </body>
 </html>
